@@ -12,3 +12,5 @@ public class Entity {
     public int x,y;
     public int speed;
 }
+
+//This is a test to see what happens
