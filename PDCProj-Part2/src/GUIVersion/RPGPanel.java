@@ -27,13 +27,19 @@ public class RPGPanel extends JPanel implements Runnable {
     public final int maxScreenCol = 16;
     public final int maxScreenRow = 12;
 
-    final int screenWidth = tileSize * maxScreenCol; //768 pixels
-    final int screenHeight = tileSize * maxScreenRow; //576 pixel
+    public final int screenWidth = tileSize * maxScreenCol; //768 pixels
+    public final int screenHeight = tileSize * maxScreenRow; //576 pixel
 
+    //World Settings
+    public final int maxWorldCols = 20;
+    public final int maxWorldRows = 20;
+    public final int worldWidth = tileSize * maxWorldCols;
+    public final int worldHeight = tileSize * maxWorldRows;
+    
     TileManager tm = new TileManager(this);
     KeyHandler key = new KeyHandler();
     Thread gameThread;
-    Player player = new Player(this,key);
+    public Player player = new Player(this,key);
 
     //FPS
     int FPS = 60;

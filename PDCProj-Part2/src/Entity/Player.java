@@ -21,16 +21,24 @@ public class Player extends Entity {
     RPGPanel rp;
     KeyHandler key;
     BufferedImage image = null;
+    
+    public final int screenX;
+    public final int screenY;
+    
     public Player(RPGPanel rp, KeyHandler key) {
         this.rp = rp;
         this.key = key;
+        
+        screenX = rp.screenWidth/2 - (rp.tileSize/2);
+        screenY = rp.screenHeight/2 - (rp.tileSize/2);
+        
         setDefaultSettings();
         getPlayerImage();
     }
 
     public void setDefaultSettings() {
-        x = 100;
-        y = 100;
+        worldX = rp.tileSize * 2;       //Player's pos on the world map
+        worldY = rp.tileSize * 8;
         speed = 4;
         direction = "down";
     }
@@ -56,17 +64,17 @@ public class Player extends Entity {
         if (key.upPress || key.downPress || key.leftPress || key.rightPress) {
             if (key.upPress) {
                 direction = "up";
-                y -= speed;
+                worldY -= speed;
             } else if (key.downPress) {
                 direction = "down";
-                y += speed;
+                worldY += speed;
             } else if (key.leftPress) {
                 direction = "left";
-                x -= speed;
+                worldX -= speed;
 
             } else if (key.rightPress) {
                 direction = "right";
-                x += speed;
+                worldX += speed;
             }
             spriteCounter++;
             if (spriteCounter > 10) {
@@ -120,6 +128,6 @@ public class Player extends Entity {
                 }
                 break;
         }
-        g2.drawImage(image, x, y, rp.tileSize, rp.tileSize, null);
+        g2.drawImage(image, screenX, screenY, rp.tileSize, rp.tileSize, null);
     }
 }
