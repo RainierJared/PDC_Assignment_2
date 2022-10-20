@@ -72,8 +72,6 @@ public class TileManager {
     }
 
     public void draw(Graphics2D g2) {
-//        g2.drawImage(tile[0].image, 0, 0, rp.tileSize, rp.tileSize, null);
-//        g2.drawImage(tile[1].image, 48, 0, rp.tileSize, rp.tileSize, null);
         int cols = 0;
         int rows = 0;
         int x = 0;
