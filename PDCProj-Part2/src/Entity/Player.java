@@ -26,7 +26,9 @@ public class Player extends Entity {
     public final int screenX;
     public final int screenY;
 
-    public int hasPhone = 0;
+    public int hasItems = 0;
+    
+    boolean hasPhone = false;
 
     public Player(RPGPanel rp, KeyHandler key) {
         this.rp = rp;
@@ -122,13 +124,13 @@ public class Player extends Entity {
 
             switch (objName) {
                 case "Phone":
-                    hasPhone++;
+                    hasItems++;
                     rp.sObj[i] = null;
+                    hasPhone = true;
                     break;
                 case "Door":
-                    if (hasPhone > 0) {
+                    if (hasItems > 0 && hasPhone == true) {
                         rp.sObj[i] = null;
-                        hasPhone--;
                     }
                     break;
             }

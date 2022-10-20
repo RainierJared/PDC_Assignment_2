@@ -28,6 +28,6 @@ public class UI {
         g2.setFont(new Font("Arial",Font.PLAIN,40));
         g2.setColor(Color.white);
         g2.drawImage(itemImage, rp.tileSize/2, rp.tileSize/2,rp.tileSize,rp.tileSize,null);
-        g2.drawString("x " + rp.player.hasPhone, 74, 65);
+        g2.drawString("x " + rp.player.hasItems, 74, 65);
     }
 }
