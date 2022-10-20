@@ -2,9 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package GUIVersion;
+package Main;
 
 import Entity.Player;
+import Object.superObject;
 import Tile.TileManager;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -31,18 +32,25 @@ public class RPGPanel extends JPanel implements Runnable {
     public final int screenHeight = tileSize * maxScreenRow; //576 pixel
 
     //World Settings
-    public final int maxWorldCols = 20;
-    public final int maxWorldRows = 20;
+    public final int maxWorldCols = 6;
+    public final int maxWorldRows = 6;
     public final int worldWidth = tileSize * maxWorldCols;
     public final int worldHeight = tileSize * maxWorldRows;
-    
-    TileManager tm = new TileManager(this);
-    KeyHandler key = new KeyHandler();
-    Thread gameThread;
-    public Player player = new Player(this,key);
 
     //FPS
     int FPS = 60;
+
+    //SYSTEM
+    TileManager tm = new TileManager(this);
+    KeyHandler key = new KeyHandler();
+    Thread gameThread;
+    public CollisionHandler ch = new CollisionHandler(this);
+    public Player player = new Player(this, key);
+    public AssetHandler ah = new AssetHandler(this);
+    public UI ui = new UI(this);
+
+    //Objects
+    public superObject sObj[] = new superObject[10];
 
     public RPGPanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -52,10 +60,13 @@ public class RPGPanel extends JPanel implements Runnable {
         this.setFocusable(true);
     }
 
+    public void setupMap() {
+        ah.setObject();
+    }
+
     public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
-
     }
 
     @Override
@@ -75,9 +86,9 @@ public class RPGPanel extends JPanel implements Runnable {
                 if (remainTime < 0) {
                     remainTime = 0;
                 }
-                
+
                 nextDrawTime += drawInterval;
-                
+
                 Thread.sleep((long) remainTime);
             } catch (InterruptedException ex) {
                 Logger.getLogger(RPGPanel.class.getName()).log(Level.SEVERE, null, ex);
@@ -93,8 +104,23 @@ public class RPGPanel extends JPanel implements Runnable {
         super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D) g;
+
+        //Tiles
         tm.draw(g2);
+        
+        //Objects
+        for (int i = 0; i < sObj.length; i++) {
+            if (sObj[i] != null) {
+                sObj[i].draw(g2, this);
+            }
+        }
+        
+        //Player
         player.draw(g2);
+
+        //UI
+        ui.draw(g2);
+        
         g2.dispose();
     }
 }

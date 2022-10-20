@@ -4,7 +4,7 @@
  */
 package Tile;
 
-import GUIVersion.RPGPanel;
+import Main.RPGPanel;
 import java.awt.Graphics2D;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,8 +19,8 @@ import javax.imageio.ImageIO;
 public class TileManager {
 
     RPGPanel rp;
-    Tile[] tile;
-    int mapTileNo[][];
+    public Tile[] tile;
+    public int mapTileNo[][];
 
     public TileManager(RPGPanel rp) {
         this.rp = rp;
@@ -37,18 +37,24 @@ public class TileManager {
 
             tile[1] = new Tile();
             tile[1].image = ImageIO.read(getClass().getResourceAsStream("/res/tile/wall.png"));
+            tile[1].collision = true;
 
             tile[2] = new Tile();
             tile[2].image = ImageIO.read(getClass().getResourceAsStream("/res/tile/drawer.png"));
+            tile[2].collision = true;
 
             tile[3] = new Tile();
             tile[3].image = ImageIO.read(getClass().getResourceAsStream("/res/tile/chair.png"));
+            tile[3].collision = true;
 
             tile[4] = new Tile();
-            tile[4].image = ImageIO.read(getClass().getResourceAsStream("/res/tile/bed.png"));
+            tile[4].image = ImageIO.read(getClass().getResourceAsStream("/res/tile/table.png"));
+            tile[4].collision = true;
 
             tile[5] = new Tile();
-            tile[5].image = ImageIO.read(getClass().getResourceAsStream("/res/tile/table.png"));
+            tile[5].image = ImageIO.read(getClass().getResourceAsStream("/res/tile/bed.png"));
+            tile[5].collision = true;
+
         } catch (IOException e) {
             e.printStackTrace();
         }

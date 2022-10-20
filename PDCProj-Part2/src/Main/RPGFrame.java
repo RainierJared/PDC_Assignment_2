@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package GUIVersion;
+package Main;
 
 import javax.swing.JFrame;
 
@@ -22,6 +22,7 @@ public class RPGFrame extends JFrame {
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         
+        panel.setupMap();
         panel.startGameThread();
     }
 }

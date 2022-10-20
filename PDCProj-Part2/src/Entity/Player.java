@@ -4,10 +4,11 @@
  */
 package Entity;
 
-import GUIVersion.KeyHandler;
-import GUIVersion.RPGPanel;
+import Main.KeyHandler;
+import Main.RPGPanel;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -21,24 +22,30 @@ public class Player extends Entity {
     RPGPanel rp;
     KeyHandler key;
     BufferedImage image = null;
-    
+
     public final int screenX;
     public final int screenY;
-    
+
+    public int hasPhone = 0;
+
     public Player(RPGPanel rp, KeyHandler key) {
         this.rp = rp;
         this.key = key;
-        
-        screenX = rp.screenWidth/2 - (rp.tileSize/2);
-        screenY = rp.screenHeight/2 - (rp.tileSize/2);
-        
+
+        screenX = rp.screenWidth / 2 - (rp.tileSize / 2);
+        screenY = rp.screenHeight / 2 - (rp.tileSize / 2);
+
+        solidArea = new Rectangle(8, 16, 32, 32);
+        defaultSolidAreaX = solidArea.x;
+        defaultSolidAreaY = solidArea.y;
+
         setDefaultSettings();
         getPlayerImage();
     }
 
     public void setDefaultSettings() {
         worldX = rp.tileSize * 2;       //Player's pos on the world map
-        worldY = rp.tileSize * 8;
+        worldY = rp.tileSize * 2;
         speed = 4;
         direction = "down";
     }
@@ -64,17 +71,38 @@ public class Player extends Entity {
         if (key.upPress || key.downPress || key.leftPress || key.rightPress) {
             if (key.upPress) {
                 direction = "up";
-                worldY -= speed;
             } else if (key.downPress) {
                 direction = "down";
-                worldY += speed;
             } else if (key.leftPress) {
                 direction = "left";
-                worldX -= speed;
-
             } else if (key.rightPress) {
                 direction = "right";
-                worldX += speed;
+            }
+
+            //For tile collisions
+            entCollision = false;
+            rp.ch.checkTile(this);
+
+            //For object collisions
+            int objIndex = rp.ch.checkObject(this, true);
+            pickUpObject(objIndex);
+            
+            //If Player doesn't collide with anything, they can move
+            if (entCollision == false) {
+                switch (direction) {
+                    case "up":
+                        worldY -= speed;
+                        break;
+                    case "down":
+                        worldY += speed;
+                        break;
+                    case "left":
+                        worldX -= speed;
+                        break;
+                    case "right":
+                        worldX += speed;
+                        break;
+                }
             }
             spriteCounter++;
             if (spriteCounter > 10) {
@@ -84,6 +112,25 @@ public class Player extends Entity {
                     spriteNum = 1;
                 }
                 spriteCounter = 0;
+            }
+        }
+    }
+
+    public void pickUpObject(int i) {
+        if (i != 999) {
+            String objName = rp.sObj[i].name;
+
+            switch (objName) {
+                case "Phone":
+                    hasPhone++;
+                    rp.sObj[i] = null;
+                    break;
+                case "Door":
+                    if (hasPhone > 0) {
+                        rp.sObj[i] = null;
+                        hasPhone--;
+                    }
+                    break;
             }
         }
     }
