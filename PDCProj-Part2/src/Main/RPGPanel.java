@@ -32,8 +32,8 @@ public class RPGPanel extends JPanel implements Runnable {
     public final int screenHeight = tileSize * maxScreenRow; //576 pixel
 
     //World Settings
-    public final int maxWorldCols = 6;
-    public final int maxWorldRows = 6;
+    public final int maxWorldCols = 15;
+    public final int maxWorldRows = 10;
     public final int worldWidth = tileSize * maxWorldCols;
     public final int worldHeight = tileSize * maxWorldRows;
 
@@ -52,6 +52,10 @@ public class RPGPanel extends JPanel implements Runnable {
     //Objects
     public superObject sObj[] = new superObject[10];
 
+    //States
+    int gameState;
+    public final int titleState = 0;
+
     public RPGPanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
@@ -62,6 +66,7 @@ public class RPGPanel extends JPanel implements Runnable {
 
     public void setupMap() {
         ah.setObject();
+        gameState = titleState;
     }
 
     public void startGameThread() {
@@ -105,22 +110,23 @@ public class RPGPanel extends JPanel implements Runnable {
 
         Graphics2D g2 = (Graphics2D) g;
 
-        //Tiles
-        tm.draw(g2);
-        
-        //Objects
-        for (int i = 0; i < sObj.length; i++) {
-            if (sObj[i] != null) {
-                sObj[i].draw(g2, this);
-            }
-        }
-        
-        //Player
-        player.draw(g2);
+        //Title Screen
+        if (gameState == titleState) {
 
-        //UI
-        ui.draw(g2);
-        
+        } else {
+            //Tiles
+            tm.draw(g2);
+            //Objects
+            for (int i = 0; i < sObj.length; i++) {
+                if (sObj[i] != null) {
+                    sObj[i].draw(g2, this);
+                }
+            }
+            //Player
+            player.draw(g2);
+            //UI
+            ui.draw(g2);
+        }
         g2.dispose();
     }
 }

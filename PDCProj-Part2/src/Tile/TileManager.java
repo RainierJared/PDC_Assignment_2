@@ -55,6 +55,7 @@ public class TileManager {
             tile[5].image = ImageIO.read(getClass().getResourceAsStream("/res/tile/bed.png"));
             tile[5].collision = true;
 
+
         } catch (IOException e) {
             e.printStackTrace();
         }

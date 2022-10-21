@@ -6,7 +6,6 @@ package Entity;
 
 import Main.KeyHandler;
 import Main.RPGPanel;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -29,6 +28,8 @@ public class Player extends Entity {
     public int hasItems = 0;
 
     boolean hasPhone = false;
+    public boolean hasTea = false;
+    public boolean hasCoffee = false;
 
     public Player(RPGPanel rp, KeyHandler key) {
         this.rp = rp;
@@ -46,8 +47,8 @@ public class Player extends Entity {
     }
 
     public void setDefaultSettings() {
-        worldX = rp.tileSize * 2;       //Player's pos on the world map
-        worldY = rp.tileSize * 2;
+        worldX = rp.tileSize * 11;       //Player's pos on the world map
+        worldY = rp.tileSize * 7;
         speed = 4;
         direction = "down";
     }
@@ -124,18 +125,56 @@ public class Player extends Entity {
 
             switch (objName) {
                 case "Phone":
-                    hasItems++;
+                    hasItems--;
                     rp.sObj[i] = null;
                     rp.ui.showMsg("Phone Acquired!");
                     hasPhone = true;
                     break;
+                case "Tea":
+                    hasItems = 5;
+                    rp.sObj[i] = null;
+                    rp.ui.showMsg("Tea Drank!");
+                    hasTea = true;
+                    rp.ui.gameFinished = true;
+                    break;
+                case "Coffee":
+                    hasItems++;
+                    rp.sObj[i] = null;
+                    rp.ui.showMsg("Coffee Powder Acquired!");
+                    break;
+                case "Sugar":
+                    hasItems++;
+                    rp.sObj[i] = null;
+                    rp.ui.showMsg("Sugar Acquired!");
+                    break;
+                case "Milk":
+                    hasItems++;
+                    rp.sObj[i] = null;
+                    rp.ui.showMsg("Milk Acquired!");
+                    break;
+                case "Mug":
+                    hasItems++;
+                    rp.sObj[i] = null;
+                    rp.ui.showMsg("Empty Mug Acquired!");
+                    break;
                 case "Door":
-                    if (hasItems > 0 && hasPhone == true) {
+                    if (hasPhone == true) {
                         rp.sObj[i] = null;
                         rp.ui.showMsg("Door Opened!");
+                        hasPhone = false;
                     } else {
                         rp.ui.showMsg("Key item has not been acquired...");
-
+                    }
+                    break;
+                case "MugWithCoffee":
+                    if (hasItems == 3) {
+                        rp.sObj[i] = null;
+                        rp.ui.showMsg("Coffee Acquired!");
+                        hasItems = 10;
+                        hasCoffee = true;
+                        rp.ui.gameFinished = true;
+                    } else {
+                        rp.ui.showMsg("Need Coffee level of at least 3 to acquire...");
                     }
                     break;
             }
