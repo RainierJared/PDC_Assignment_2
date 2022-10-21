@@ -4,6 +4,7 @@
  */
 package Object;
 
+import Main.RPGPanel;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
@@ -13,10 +14,16 @@ import javax.imageio.ImageIO;
  */
 public class objDoor extends superObject {
 
-    public objDoor() {
+    RPGPanel rp;
+
+    public objDoor(RPGPanel rp) {
+        this.rp = rp;
         name = "Door";
+
         try {
             image = ImageIO.read(getClass().getResourceAsStream("/res/objects/door.png"));
+            t.scaleImg(image, rp.tileSize, rp.tileSize);
+
         } catch (IOException e) {
             e.printStackTrace();
         }

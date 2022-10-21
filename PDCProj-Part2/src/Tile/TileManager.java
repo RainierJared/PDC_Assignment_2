@@ -5,7 +5,9 @@
 package Tile;
 
 import Main.RPGPanel;
+import Main.Tools;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,30 +33,22 @@ public class TileManager {
     }
 
     public void getTileImage() {
+        setup(0,"floor",false);
+        setup(1, "wall", true);
+        setup(2, "drawer", true);
+        setup(3, "chair", false);
+        setup(4, "table", true);
+        setup(5, "bed", false);
+    }
+
+    public void setup(int index, String imgName, boolean collision) {
+        Tools t = new Tools();
         try {
-            tile[0] = new Tile();
-            tile[0].image = ImageIO.read(getClass().getResourceAsStream("/res/tile/floor.png"));
 
-            tile[1] = new Tile();
-            tile[1].image = ImageIO.read(getClass().getResourceAsStream("/res/tile/wall.png"));
-            tile[1].collision = true;
-
-            tile[2] = new Tile();
-            tile[2].image = ImageIO.read(getClass().getResourceAsStream("/res/tile/drawer.png"));
-            tile[2].collision = true;
-
-            tile[3] = new Tile();
-            tile[3].image = ImageIO.read(getClass().getResourceAsStream("/res/tile/chair.png"));
-            tile[3].collision = true;
-
-            tile[4] = new Tile();
-            tile[4].image = ImageIO.read(getClass().getResourceAsStream("/res/tile/table.png"));
-            tile[4].collision = true;
-
-            tile[5] = new Tile();
-            tile[5].image = ImageIO.read(getClass().getResourceAsStream("/res/tile/bed.png"));
-            tile[5].collision = true;
-
+            tile[index] = new Tile();
+            tile[index].image = ImageIO.read(getClass().getResourceAsStream("/res/tile/" + imgName + ".png"));
+            tile[index].image = t.scaleImg(tile[index].image, rp.tileSize, rp.tileSize);
+            tile[index].collision = collision;
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -110,6 +104,7 @@ public class TileManager {
                     && worldX - rp.tileSize < rp.player.worldX + rp.player.screenX
                     && worldY + rp.tileSize > rp.player.worldY - rp.player.screenY
                     && worldY - rp.tileSize < rp.player.worldY + rp.player.screenY) {
+
                 g2.drawImage(tile[tileNo].image, screenX, screenY, rp.tileSize, rp.tileSize, null);
 
             }

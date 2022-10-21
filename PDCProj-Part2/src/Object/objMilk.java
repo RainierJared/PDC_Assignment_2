@@ -4,6 +4,7 @@
  */
 package Object;
 
+import Main.RPGPanel;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
@@ -11,12 +12,17 @@ import javax.imageio.ImageIO;
  *
  * @author botor
  */
-public class objMilk extends superObject{
+public class objMilk extends superObject {
 
-    public objMilk() {
+    RPGPanel rp;
+
+    public objMilk(RPGPanel rp) {
+        this.rp = rp;
         name = "Milk";
         try {
             image = ImageIO.read(getClass().getResourceAsStream("/res/objects/milk.png"));
+            t.scaleImg(image, rp.tileSize, rp.tileSize);
+
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -17,6 +17,8 @@ import java.awt.image.BufferedImage;
 public class UI {
 
     RPGPanel rp;
+    Graphics2D g2;
+    Tools t;
     BufferedImage itemImage;
     public boolean messageOn = false;
     public boolean gameFinished = false;
@@ -26,7 +28,8 @@ public class UI {
 
     public UI(RPGPanel rp) {
         this.rp = rp;
-        objMugWithCoffee item = new objMugWithCoffee();
+        this.t = new Tools();
+        objMugWithCoffee item = new objMugWithCoffee(rp);
         itemImage = item.image;
 
     }
@@ -37,9 +40,20 @@ public class UI {
     }
 
     public void draw(Graphics2D g2) {
-        if (rp.gameState == rp.titleState) {
-            drawTitleScreen(g2);
+        this.g2 = g2;
+
+        if (rp.gameState == rp.playState) {
+            drawPlayScreen();
         }
+        if (rp.gameState == rp.pauseState) {
+            drawPauseScreen();
+        }
+        if (rp.gameState == rp.titleState) {
+            drawTitleScreen();
+        }
+    }
+
+    private void drawPlayScreen() {
         if (gameFinished == true) {
             if (rp.player.hasCoffee == true) {
                 coffeeEnd(g2);
@@ -49,37 +63,52 @@ public class UI {
             rp.gameThread = null;
 
         } else {
-            g2.setFont(new Font("Arial", Font.PLAIN, 40));
-            g2.setColor(Color.white);
-            g2.drawImage(itemImage, rp.tileSize / 2, rp.tileSize / 2, rp.tileSize, rp.tileSize, null);
-            g2.drawString("= " + rp.player.hasItems, 74, 65);
-
-            //Message
-            if (messageOn == true) {
-
-                g2.setFont(g2.getFont().deriveFont(30F));
-                g2.drawString(message, rp.tileSize / 2, rp.tileSize * 2);
-
-                msgCounter++;
-
-                if (msgCounter > 90) {
-                    msgCounter = 0;
-                    messageOn = false;
-                }
-            }
+            drawUI(g2);
         }
     }
 
-    public void drawTitleScreen(Graphics2D g2) {
-        
-        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 96F));
-        String text = "Coffee Adventure";
-        int textLength = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-        int x = rp.screenWidth / 2 - textLength / 2;
-        int y = rp.tileSize*3;
-        
+    private void drawPauseScreen() {
+        String text = "PAUSED";
+        g2.setFont(new Font("Arial", Font.PLAIN, 70));
         g2.setColor(Color.white);
+        int x = t.findCenter(g2, rp, text);
+        int y = rp.screenHeight / 2;
+
         g2.drawString(text, x, y);
+    }
+
+    public void drawTitleScreen() {
+
+        //Title Name
+        g2.setFont(new Font("Arial", Font.PLAIN, 70));
+        g2.setColor(Color.white);
+
+        String text = "Coffee Adventure";
+        int x = t.findCenter(g2, rp, text);
+        int y = rp.tileSize * 3;
+
+        g2.drawString(text, x, y);
+    }
+
+    private void drawUI(Graphics2D g2) {
+        g2.setFont(new Font("Arial", Font.PLAIN, 40));
+        g2.setColor(Color.white);
+        g2.drawImage(itemImage, rp.tileSize / 2, rp.tileSize / 2, rp.tileSize, rp.tileSize, null);
+        g2.drawString("= " + rp.player.hasItems, 74, 65);
+
+        //Message
+        if (messageOn == true) {
+
+            g2.setFont(g2.getFont().deriveFont(30F));
+            g2.drawString(message, rp.tileSize / 2, rp.tileSize * 2);
+
+            msgCounter++;
+
+            if (msgCounter > 90) {
+                msgCounter = 0;
+                messageOn = false;
+            }
+        }
     }
 
     public void teaEnd(Graphics2D g2) {

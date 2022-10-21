@@ -42,7 +42,7 @@ public class RPGPanel extends JPanel implements Runnable {
 
     //SYSTEM
     TileManager tm = new TileManager(this);
-    KeyHandler key = new KeyHandler();
+    KeyHandler key = new KeyHandler(this);
     Thread gameThread;
     public CollisionHandler ch = new CollisionHandler(this);
     public Player player = new Player(this, key);
@@ -55,6 +55,8 @@ public class RPGPanel extends JPanel implements Runnable {
     //States
     int gameState;
     public final int titleState = 0;
+    public final int playState = 1;
+    public final int pauseState = 2;
 
     public RPGPanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -102,7 +104,9 @@ public class RPGPanel extends JPanel implements Runnable {
     }
 
     public void update() {
-        player.update();
+        if (gameState == playState) {
+            player.update();
+        }
     }
 
     public void paintComponent(Graphics g) {
@@ -112,20 +116,20 @@ public class RPGPanel extends JPanel implements Runnable {
 
         //Title Screen
         if (gameState == titleState) {
-
-        } else {
-            //Tiles
-            tm.draw(g2);
-            //Objects
-            for (int i = 0; i < sObj.length; i++) {
-                if (sObj[i] != null) {
-                    sObj[i].draw(g2, this);
-                }
-            }
-            //Player
-            player.draw(g2);
-            //UI
             ui.draw(g2);
+        } else {
+        //Tiles
+        tm.draw(g2);
+        //Objects
+        for (int i = 0; i < sObj.length; i++) {
+            if (sObj[i] != null) {
+                sObj[i].draw(g2, this);
+            }
+        }
+        //Player
+        player.draw(g2);
+        //UI
+        ui.draw(g2);
         }
         g2.dispose();
     }

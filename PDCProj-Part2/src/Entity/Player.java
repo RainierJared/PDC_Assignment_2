@@ -6,6 +6,7 @@ package Entity;
 
 import Main.KeyHandler;
 import Main.RPGPanel;
+import Main.Tools;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -54,19 +55,28 @@ public class Player extends Entity {
     }
 
     public void getPlayerImage() {
-        try {
-            up1 = ImageIO.read(getClass().getResourceAsStream("/res/player/walk-up-1.png"));
-            up2 = ImageIO.read(getClass().getResourceAsStream("/res/player/walk-up-2.png"));
-            down1 = ImageIO.read(getClass().getResourceAsStream("/res/player/walk-down-1.png"));
-            down2 = ImageIO.read(getClass().getResourceAsStream("/res/player/walk-down-2.png"));
-            left1 = ImageIO.read(getClass().getResourceAsStream("/res/player/walk-left-1.png"));
-            left2 = ImageIO.read(getClass().getResourceAsStream("/res/player/walk-left-2.png"));
-            right1 = ImageIO.read(getClass().getResourceAsStream("/res/player/walk-right-1.png"));
-            right2 = ImageIO.read(getClass().getResourceAsStream("/res/player/walk-right-2.png"));
 
+        up1 = setup("walk-up-1");
+        up2 = setup("walk-up-2");
+        down1 = setup("walk-down-1");
+        down2 = setup("walk-down-2");
+        left1 = setup("walk-left-1");
+        left2 = setup("walk-left-2");
+        right1 = setup("walk-right-1");
+        right2 = setup("walk-right-2");
+
+    }
+
+    public BufferedImage setup(String imgName) {
+        Tools t = new Tools();
+        BufferedImage scaledImg = null;
+        try {
+            scaledImg = ImageIO.read(getClass().getResourceAsStream("/res/player/" + imgName + ".png"));
+            scaledImg = t.scaleImg(scaledImg, rp.tileSize, rp.tileSize);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return scaledImg;
     }
 
     public void update() {

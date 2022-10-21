@@ -13,11 +13,15 @@ import java.awt.event.KeyListener;
  */
 public class KeyHandler implements KeyListener {
 
+    RPGPanel rp;
     public boolean upPress, downPress, leftPress, rightPress;
 
     @Override
     public void keyTyped(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public KeyHandler(RPGPanel rp) {
+        this.rp = rp;
     }
 
     @Override
@@ -35,6 +39,13 @@ public class KeyHandler implements KeyListener {
         }
         if (code == KeyEvent.VK_RIGHT) {
             rightPress = true;
+        }
+        if (code == KeyEvent.VK_P) {
+            if (rp.gameState == rp.playState) {
+                rp.gameState = rp.pauseState;
+            } else if(rp.gameState == rp.pauseState) {
+                rp.gameState = rp.playState;
+            }
         }
     }
 

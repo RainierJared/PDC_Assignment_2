@@ -5,6 +5,7 @@
 package Object;
 
 import Main.RPGPanel;
+import Main.Tools;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -22,6 +23,7 @@ public class superObject {
     public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
     public int defaultSolidAreaX = 0;
     public int defaultSolidAreaY = 0;
+    Tools t = new Tools();
 
     public void draw(Graphics2D g2, RPGPanel rp) {
         int screenX = worldX - rp.player.worldX + rp.player.screenX;
