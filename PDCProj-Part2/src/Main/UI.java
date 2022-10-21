@@ -17,6 +17,11 @@ import java.awt.image.BufferedImage;
 public class UI {
     RPGPanel rp;
     BufferedImage itemImage; 
+    public boolean messageOn = false;
+    public String message = "";
+    
+    int msgCounter = 0;
+    
     public UI(RPGPanel rp) {
         this.rp = rp;
         objBag item = new objBag();
@@ -24,10 +29,29 @@ public class UI {
         
     }
     
+    public void showMsg(String text) {
+        message = text;
+        messageOn = true;
+    }
+    
     public void draw(Graphics2D g2) {
         g2.setFont(new Font("Arial",Font.PLAIN,40));
         g2.setColor(Color.white);
         g2.drawImage(itemImage, rp.tileSize/2, rp.tileSize/2,rp.tileSize,rp.tileSize,null);
         g2.drawString("x " + rp.player.hasItems, 74, 65);
+        
+        //Message
+        if(messageOn == true) {
+            
+            g2.setFont(g2.getFont().deriveFont(30F));
+            g2.drawString(message, rp.tileSize/2, rp.tileSize*2);
+            
+            msgCounter++;
+            
+            if(msgCounter > 90) {
+                msgCounter = 0;
+                messageOn = false;
+            }
+        }
     }
 }

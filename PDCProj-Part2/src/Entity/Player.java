@@ -27,7 +27,7 @@ public class Player extends Entity {
     public final int screenY;
 
     public int hasItems = 0;
-    
+
     boolean hasPhone = false;
 
     public Player(RPGPanel rp, KeyHandler key) {
@@ -88,7 +88,7 @@ public class Player extends Entity {
             //For object collisions
             int objIndex = rp.ch.checkObject(this, true);
             pickUpObject(objIndex);
-            
+
             //If Player doesn't collide with anything, they can move
             if (entCollision == false) {
                 switch (direction) {
@@ -126,11 +126,16 @@ public class Player extends Entity {
                 case "Phone":
                     hasItems++;
                     rp.sObj[i] = null;
+                    rp.ui.showMsg("Phone Acquired!");
                     hasPhone = true;
                     break;
                 case "Door":
                     if (hasItems > 0 && hasPhone == true) {
                         rp.sObj[i] = null;
+                        rp.ui.showMsg("Door Opened!");
+                    } else {
+                        rp.ui.showMsg("Key item has not been acquired...");
+
                     }
                     break;
             }
