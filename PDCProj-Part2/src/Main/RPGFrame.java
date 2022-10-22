@@ -21,7 +21,7 @@ public class RPGFrame extends JFrame {
         this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
-        
+
         panel.setupMap();
         panel.startGameThread();
     }

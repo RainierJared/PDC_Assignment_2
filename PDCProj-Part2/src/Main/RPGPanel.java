@@ -57,6 +57,7 @@ public class RPGPanel extends JPanel implements Runnable {
     public final int titleState = 0;
     public final int playState = 1;
     public final int pauseState = 2;
+    public final int instructionState = 3;
 
     public RPGPanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -68,7 +69,7 @@ public class RPGPanel extends JPanel implements Runnable {
 
     public void setupMap() {
         ah.setObject();
-        gameState = titleState;
+        gameState = instructionState;
     }
 
     public void startGameThread() {
@@ -115,21 +116,23 @@ public class RPGPanel extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D) g;
 
         //Title Screen
-        if (gameState == titleState) {
+        if (gameState == instructionState) {
+            ui.draw(g2);
+        } else if (gameState == titleState) {
             ui.draw(g2);
         } else {
-        //Tiles
-        tm.draw(g2);
-        //Objects
-        for (int i = 0; i < sObj.length; i++) {
-            if (sObj[i] != null) {
-                sObj[i].draw(g2, this);
+            //Tiles
+            tm.draw(g2);
+            //Objects
+            for (int i = 0; i < sObj.length; i++) {
+                if (sObj[i] != null) {
+                    sObj[i].draw(g2, this);
+                }
             }
-        }
-        //Player
-        player.draw(g2);
-        //UI
-        ui.draw(g2);
+            //Player
+            player.draw(g2);
+            //UI
+            ui.draw(g2);
         }
         g2.dispose();
     }

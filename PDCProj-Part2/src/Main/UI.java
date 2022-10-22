@@ -23,6 +23,7 @@ public class UI {
     public boolean messageOn = false;
     public boolean gameFinished = false;
     public String message = "";
+    public int cmdNo = 0;
 
     int msgCounter = 0;
 
@@ -41,7 +42,6 @@ public class UI {
 
     public void draw(Graphics2D g2) {
         this.g2 = g2;
-
         if (rp.gameState == rp.playState) {
             drawPlayScreen();
         }
@@ -51,6 +51,44 @@ public class UI {
         if (rp.gameState == rp.titleState) {
             drawTitleScreen();
         }
+        if (rp.gameState == rp.instructionState) {
+            drawInstructionScreen();
+        }
+    }
+
+    private void drawInstructionScreen() {
+        //Instructions
+        g2.setFont(new Font("Arial", Font.PLAIN, 70));
+        g2.setColor(Color.white);
+
+        String text = "INSTRUCTIONS";
+        int x = t.findCenter(g2, rp, text);
+        int y = rp.tileSize * 3;
+        g2.drawString(text, x, y);
+
+        g2.setFont(new Font("Arial", Font.PLAIN, 20));
+        g2.setColor(Color.white);
+
+        text = "Use Arrow Keys to move";
+        x = t.findCenter(g2, rp, text);
+        y += rp.tileSize * 2;
+        g2.drawString(text, x, y);
+
+        text = "Z to interact";
+        x = t.findCenter(g2, rp, text);
+        y += rp.tileSize;
+        g2.drawString(text, x, y);
+
+        text = "P to pause";
+        x = t.findCenter(g2, rp, text);
+        y += rp.tileSize;
+        g2.drawString(text, x, y);
+
+        text = "Press Space to continue";
+        x = t.findCenter(g2, rp, text);
+        y += rp.tileSize;
+        g2.drawString(text, x, y);
+
     }
 
     private void drawPlayScreen() {
@@ -86,8 +124,39 @@ public class UI {
         String text = "Coffee Adventure";
         int x = t.findCenter(g2, rp, text);
         int y = rp.tileSize * 3;
-
         g2.drawString(text, x, y);
+
+        //Character
+        x = rp.screenWidth / 2 - (rp.tileSize * 2) / 2;
+        y += rp.tileSize * 2;
+        g2.drawImage(rp.player.idle, x, y, rp.tileSize * 2, rp.tileSize * 2, null);
+
+        //Menu
+        g2.setFont(new Font("Arial", Font.PLAIN, 30));
+        g2.setColor(Color.white);
+
+        text = "NEW GAME";
+        x = t.findCenter(g2, rp, text);
+        y += rp.tileSize * 4;
+        g2.drawString(text, x, y);
+        if (cmdNo == 0) {
+            g2.drawString(">", x - rp.tileSize, y);
+        }
+
+        text = "LOAD GAME";
+        x = t.findCenter(g2, rp, text);
+        y += rp.tileSize;
+        g2.drawString(text, x, y);
+        if (cmdNo == 1) {
+            g2.drawString(">", x - rp.tileSize, y);
+        }
+        text = "QUIT";
+        x = t.findCenter(g2, rp, text);
+        y += rp.tileSize;
+        g2.drawString(text, x, y);
+        if (cmdNo == 2) {
+            g2.drawString(">", x - rp.tileSize, y);
+        }
     }
 
     private void drawUI(Graphics2D g2) {

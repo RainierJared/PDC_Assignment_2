@@ -4,11 +4,14 @@
  */
 package Main;
 
+import javax.swing.ImageIcon;
+
 /**
  *
  * @author jaredbotor
  */
 public class Main {
+
     public static void main(String[] args) {
         RPGFrame obj = new RPGFrame();
     }

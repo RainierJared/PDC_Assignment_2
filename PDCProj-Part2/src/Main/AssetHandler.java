@@ -58,9 +58,11 @@ public class AssetHandler {
         rp.sObj[7].worldX = 11 * rp.tileSize;
         rp.sObj[7].worldY = 1 * rp.tileSize;
 
+    }
+    
+    public void drawCoffee() {
         rp.sObj[8] = new objMugWithCoffee(rp);
         rp.sObj[8].worldX = 8 * rp.tileSize;
         rp.sObj[8].worldY = 3 * rp.tileSize;
-
     }
 }

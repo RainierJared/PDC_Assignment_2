@@ -64,6 +64,7 @@ public class Player extends Entity {
         left2 = setup("walk-left-2");
         right1 = setup("walk-right-1");
         right2 = setup("walk-right-2");
+        idle = setup("idle-1");
 
     }
 
@@ -130,6 +131,10 @@ public class Player extends Entity {
     }
 
     public void pickUpObject(int i) {
+        if(hasItems == 3) {
+            rp.ah.drawCoffee();
+        }
+        
         if (i != 999) {
             String objName = rp.sObj[i].name;
 
@@ -141,7 +146,7 @@ public class Player extends Entity {
                     hasPhone = true;
                     break;
                 case "Tea":
-                    hasItems = 5;
+                    hasItems += 5;
                     rp.sObj[i] = null;
                     rp.ui.showMsg("Tea Drank!");
                     hasTea = true;
