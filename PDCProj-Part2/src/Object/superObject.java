@@ -14,7 +14,7 @@ import java.awt.image.BufferedImage;
  *
  * @author botor
  */
-public class superObject {
+public abstract class superObject {
 
     public BufferedImage image;
     public String name;
@@ -37,4 +37,6 @@ public class superObject {
 
         }
     }
+    
+    public abstract void setCollision();
 }

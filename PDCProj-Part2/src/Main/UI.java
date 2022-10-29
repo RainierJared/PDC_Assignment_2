@@ -5,6 +5,7 @@
 package Main;
 
 import Object.objMugWithCoffee;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -16,16 +17,31 @@ import java.awt.image.BufferedImage;
  */
 public class UI {
 
-    RPGPanel rp;
-    Graphics2D g2;
-    Tools t;
-    BufferedImage itemImage;
-    public boolean messageOn = false;
-    public boolean gameFinished = false;
-    public String message = "";
-    public int cmdNo = 0;
+    //Private
+    //--------------
+    //Objects
+    private final RPGPanel rp;
+    private Graphics2D g2;
+    private final Tools t;
+    private final BufferedImage itemImage;
 
-    int msgCounter = 0;
+    //Booleans
+    private boolean messageOn = false;
+
+    //String
+    private String message = "";
+
+    //Integers
+    private int msgCounter = 0;
+
+    //Public
+    //--------------
+    //Integer
+    public int cmdNo = 0;
+    public int subState = 0;
+
+    //Boolean
+    public boolean gameFinished = false;
 
     public UI(RPGPanel rp) {
         this.rp = rp;
@@ -42,17 +58,183 @@ public class UI {
 
     public void draw(Graphics2D g2) {
         this.g2 = g2;
-        if (rp.gameState == rp.playState) {
+        //Play State
+        if (rp.gameState == States.PLAYSTATE) {
             drawPlayScreen();
         }
-        if (rp.gameState == rp.pauseState) {
-            drawPauseScreen();
-        }
-        if (rp.gameState == rp.titleState) {
+        //Title State
+        if (rp.gameState == States.TITLESTATE) {
             drawTitleScreen();
         }
-        if (rp.gameState == rp.instructionState) {
+        //Instruction State
+        if (rp.gameState == States.INSTRUCTIONSTATE) {
             drawInstructionScreen();
+        }
+        //Option State
+        if (rp.gameState == States.OPTIONSTATE) {
+            drawOptionScreen();
+        }
+    }
+
+    private void drawOptionScreen() {
+        g2.setColor(Color.white);
+        g2.setFont(new Font("Arial", Font.PLAIN, 20));
+
+        //Sub Window
+        int frameX = rp.tileSize * 4;
+        int frameY = rp.tileSize;
+        int frameWidth = rp.tileSize * 8;
+        int frameHeight = rp.tileSize * 10;
+
+        drawSubWindow(frameX, frameY, frameWidth, frameHeight);
+
+        switch (subState) {
+            case 0:
+                optionsTop(frameX, frameY);
+                break;
+            case 1:
+                optionsControl(frameX, frameY);
+                break;
+            case 2:
+                optionsQuit(frameX, frameY);
+                break;
+        }
+        rp.key.interactPressed = false;
+    }
+
+    private void optionsTop(int frameX, int frameY) {
+
+        int textX;
+        int textY;
+
+        //Title
+        String text = "OPTIONS";
+        textX = t.findCenter(g2, rp, text);
+        textY = frameY + rp.tileSize;
+        g2.drawString(text, textX, textY);
+
+        //Save Game
+        textX = frameX + rp.tileSize;
+        textY += rp.tileSize * 2;
+        g2.drawString("SAVE GAME", textX, textY);
+        if (cmdNo == 0) {
+            g2.drawString(">", textX - 25, textY);
+        }
+
+        //Controls
+        textY += rp.tileSize;
+        g2.drawString("CONTROLS", textX, textY);
+        if (cmdNo == 1) {
+            g2.drawString(">", textX - 25, textY);
+            if (rp.key.interactPressed == true) {
+                subState = 1;
+                cmdNo = 0;
+            }
+        }
+        //Exit Game
+        textY += rp.tileSize;
+        g2.drawString("EXIT GAME", textX, textY);
+        if (cmdNo == 2) {
+            g2.drawString(">", textX - 25, textY);
+            if (rp.key.interactPressed == true) {
+                subState = 2;
+                cmdNo = 0;
+            }
+        }
+
+        //Back
+        textY += rp.tileSize * 4;
+        g2.drawString("BACK", textX, textY);
+        if (cmdNo == 3) {
+            g2.drawString(">", textX - 25, textY);
+            if (rp.key.interactPressed == true) {
+                rp.gameState = States.PLAYSTATE;
+                cmdNo = 0;
+            }
+        }
+    }
+
+    private void optionsControl(int frameX, int frameY) {
+        int textX;
+        int textY;
+
+        //Title
+        String text = "CONTROLS";
+        textX = t.findCenter(g2, rp, text);
+        textY = frameY + rp.tileSize;
+        g2.drawString(text, textX, textY);
+
+        //Subtext
+        textX = frameX + rp.tileSize;
+        textY += rp.tileSize;
+        g2.drawString("MOVEMENT", textX, textY);
+        textY += rp.tileSize;
+        g2.drawString("OPTIONS", textX, textY);
+        textY += rp.tileSize;
+        g2.drawString("INTERACT", textX, textY);
+
+        //Keys
+        textX = frameX + rp.tileSize * 4;
+        textY = frameY + rp.tileSize * 2;
+        g2.drawString("ARROW KEYS", textX, textY);
+        textY += rp.tileSize;
+        g2.drawString("ESC", textX, textY);
+        textY += rp.tileSize;
+        g2.drawString("Z", textX, textY);
+
+        //Back
+        textX = frameX + rp.tileSize;
+        textY = frameY + rp.tileSize * 9;
+        g2.drawString("BACK", textX, textY);
+        if (cmdNo == 0) {
+            g2.drawString(">", textX - 25, textY);
+            if (rp.key.interactPressed == true) {
+                subState = 0;
+            }
+        }
+    }
+
+    private void optionsQuit(int frameX, int frameY) {
+
+        //Title
+        String text = "WARNING";
+        int textX = t.findCenter(g2, rp, text);
+        int textY = frameY + rp.tileSize;
+        g2.drawString(text, textX, textY);
+
+        //Subtext
+        String dialogue = "Are you sure you want to /nquit to the title scren?";
+        textX = frameX + rp.tileSize;
+        textY = frameY + rp.tileSize * 3;
+        for (String line : dialogue.split("/n")) {
+            g2.drawString(line, textX, textY);
+            textY += 40;
+        }
+
+        //Yes
+        text = "YES";
+        textX = t.findCenter(g2, rp, text);
+        textY += rp.tileSize * 3;
+        g2.drawString(text, textX, textY);
+        if (cmdNo == 0) {
+            g2.drawString(">", textX - 25, textY);
+            if (rp.key.interactPressed == true) {
+                subState = 0;
+                rp.gameState = States.TITLESTATE;
+            }
+        }
+
+        //No
+        text = "NO";
+        textX = t.findCenter(g2, rp, text);
+        textY += rp.tileSize;
+        g2.drawString(text, textX, textY);
+        if (cmdNo == 1) {
+            g2.drawString(">", textX - 25, textY);
+            if (rp.key.interactPressed == true) {
+                subState = 0;
+                cmdNo=2;
+            }
         }
     }
 
@@ -79,7 +261,7 @@ public class UI {
         y += rp.tileSize;
         g2.drawString(text, x, y);
 
-        text = "P to pause";
+        text = "ESCAPE to go to options menu";
         x = t.findCenter(g2, rp, text);
         y += rp.tileSize;
         g2.drawString(text, x, y);
@@ -103,16 +285,6 @@ public class UI {
         } else {
             drawUI(g2);
         }
-    }
-
-    private void drawPauseScreen() {
-        String text = "PAUSED";
-        g2.setFont(new Font("Arial", Font.PLAIN, 70));
-        g2.setColor(Color.white);
-        int x = t.findCenter(g2, rp, text);
-        int y = rp.screenHeight / 2;
-
-        g2.drawString(text, x, y);
     }
 
     public void drawTitleScreen() {
@@ -180,7 +352,7 @@ public class UI {
         }
     }
 
-    public void teaEnd(Graphics2D g2) {
+    private void teaEnd(Graphics2D g2) {
         g2.setFont(new Font("Arial", Font.BOLD, 40));
         g2.setColor(Color.white);
 
@@ -204,7 +376,7 @@ public class UI {
         g2.drawString(text, rp.screenWidth / 2 - textLength / 2, rp.screenHeight / 2 + (rp.tileSize * 4));
     }
 
-    public void coffeeEnd(Graphics2D g2) {
+    private void coffeeEnd(Graphics2D g2) {
         g2.setFont(new Font("Arial", Font.BOLD, 40));
         g2.setColor(Color.white);
 
@@ -226,5 +398,17 @@ public class UI {
         text = "Final Score: " + rp.player.hasItems;
         textLength = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
         g2.drawString(text, rp.screenWidth / 2 - textLength / 2, rp.screenHeight / 2 + (rp.tileSize * 4));
+    }
+
+    private void drawSubWindow(int x, int y, int width, int height) {
+        Color c = new Color(0, 0, 0);
+        g2.setColor(c);
+        g2.fillRoundRect(x, y, width, height, 35, 5);
+
+        c = new Color(255, 255, 255);
+        g2.setColor(c);
+        g2.setStroke(new BasicStroke(5));
+        g2.drawRoundRect(x + 5, y + 5, width - 10, height - 10, 25, 25);
+
     }
 }

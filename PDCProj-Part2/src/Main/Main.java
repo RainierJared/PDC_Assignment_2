@@ -4,8 +4,6 @@
  */
 package Main;
 
-import javax.swing.ImageIcon;
-
 /**
  *
  * @author jaredbotor

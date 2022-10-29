@@ -54,10 +54,6 @@ public class RPGPanel extends JPanel implements Runnable {
 
     //States
     int gameState;
-    public final int titleState = 0;
-    public final int playState = 1;
-    public final int pauseState = 2;
-    public final int instructionState = 3;
 
     public RPGPanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -69,7 +65,7 @@ public class RPGPanel extends JPanel implements Runnable {
 
     public void setupMap() {
         ah.setObject();
-        gameState = instructionState;
+        gameState = States.INSTRUCTIONSTATE;
     }
 
     public void startGameThread() {
@@ -105,7 +101,7 @@ public class RPGPanel extends JPanel implements Runnable {
     }
 
     public void update() {
-        if (gameState == playState) {
+        if (gameState == States.PLAYSTATE) {
             player.update();
         }
     }
@@ -116,23 +112,27 @@ public class RPGPanel extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D) g;
 
         //Title Screen
-        if (gameState == instructionState) {
-            ui.draw(g2);
-        } else if (gameState == titleState) {
-            ui.draw(g2);
-        } else {
-            //Tiles
-            tm.draw(g2);
+        switch (gameState) {
+            case States.INSTRUCTIONSTATE:
+                ui.draw(g2);
+                break;
+            case States.TITLESTATE:
+                ui.draw(g2);
+                break;
+            default:
+                //Tiles
+                tm.draw(g2);
             //Objects
-            for (int i = 0; i < sObj.length; i++) {
-                if (sObj[i] != null) {
-                    sObj[i].draw(g2, this);
+            for (superObject sObj1 : sObj) {
+                if (sObj1 != null) {
+                    sObj1.draw(g2, this);
                 }
-            }
-            //Player
-            player.draw(g2);
-            //UI
-            ui.draw(g2);
+            } //Player
+                player.draw(g2);
+                //UI
+                ui.draw(g2);
+                break;
+
         }
         g2.dispose();
     }

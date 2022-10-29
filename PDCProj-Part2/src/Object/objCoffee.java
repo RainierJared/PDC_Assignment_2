@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
  *
  * @author botor
  */
-public class objCoffee extends superObject {
+public final class objCoffee extends superObject {
 
     RPGPanel rp;
 
@@ -25,6 +25,11 @@ public class objCoffee extends superObject {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        collision = true;
+        this.setCollision();
+    }
+
+    @Override
+    public void setCollision() {
+        this.collision = true;
     }
 }

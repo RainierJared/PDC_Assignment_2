@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
  *
  * @author botor
  */
-public class objSugar extends superObject {
+public final class objSugar extends superObject {
 
     RPGPanel rp;
 
@@ -26,6 +26,12 @@ public class objSugar extends superObject {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        collision = true;
+        this.setCollision();
+        
+    }
+
+    @Override
+    public void setCollision() {
+        this.collision = true;
     }
 }

@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
  *
  * @author botor
  */
-public class objMug extends superObject {
+public final class objMug extends superObject {
     RPGPanel rp;
     public objMug(RPGPanel rp) {
         this.rp = rp;
@@ -24,6 +24,11 @@ public class objMug extends superObject {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        collision = true;
+        this.setCollision();
+    }
+
+    @Override
+    public void setCollision() {
+        this.collision = true;
     }
 }

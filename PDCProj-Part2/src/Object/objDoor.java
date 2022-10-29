@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
  *
  * @author botor
  */
-public class objDoor extends superObject {
+public final class objDoor extends superObject {
 
     RPGPanel rp;
 
@@ -27,6 +27,11 @@ public class objDoor extends superObject {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        collision = true;
+        this.setCollision();
+    }
+
+    @Override
+    public void setCollision() {
+        this.collision = true;
     }
 }

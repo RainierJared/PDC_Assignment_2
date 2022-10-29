@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
  *
  * @author botor
  */
-public class objMilk extends superObject {
+public final class objMilk extends superObject {
 
     RPGPanel rp;
 
@@ -26,6 +26,11 @@ public class objMilk extends superObject {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        collision = true;
+        this.setCollision();
+    }
+
+    @Override
+    public void setCollision() {
+        this.collision = true;
     }
 }

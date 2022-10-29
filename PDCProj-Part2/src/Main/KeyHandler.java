@@ -14,7 +14,7 @@ import java.awt.event.KeyListener;
 public class KeyHandler implements KeyListener {
 
     RPGPanel rp;
-    public boolean upPress, downPress, leftPress, rightPress;
+    public boolean upPress, downPress, leftPress, rightPress, interactPressed;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -22,73 +22,117 @@ public class KeyHandler implements KeyListener {
 
     public KeyHandler(RPGPanel rp) {
         this.rp = rp;
+        this.interactPressed = false;
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
+        //Instruction State
+        switch (rp.gameState) {
+            case States.INSTRUCTIONSTATE:
+                instructionInput(code);
+                break;
+            case States.TITLESTATE:
+                titleInput(code);
+                break;
+            case States.PLAYSTATE:
+                playInput(code);
+                break;
+            case States.OPTIONSTATE:
+                optionState(code);
+                break;
+            default:
+                break;
+        }
+    }
 
-        if(rp.gameState == rp.instructionState) {
-            if(code == KeyEvent.VK_SPACE) {
-                rp.gameState = rp.titleState;
+    private void instructionInput(int code) {
+        if (code == KeyEvent.VK_SPACE) {
+            rp.gameState = States.TITLESTATE;
+        }
+    }
+
+    private void playInput(int code) {
+        if (code == KeyEvent.VK_UP) {
+            upPress = true;
+        }
+        if (code == KeyEvent.VK_DOWN) {
+            downPress = true;
+        }
+        if (code == KeyEvent.VK_LEFT) {
+            leftPress = true;
+        }
+        if (code == KeyEvent.VK_RIGHT) {
+            rightPress = true;
+        }
+        if (code == KeyEvent.VK_ESCAPE) {
+            rp.gameState = States.OPTIONSTATE;
+        }
+    }
+
+    private void titleInput(int code) {
+        if (code == KeyEvent.VK_UP) {
+            rp.ui.cmdNo--;
+            if (rp.ui.cmdNo < 0) {
+                rp.ui.cmdNo = 2;
             }
         }
-        
-        if (rp.gameState == rp.titleState) {
-            if (code == KeyEvent.VK_UP) {
-                rp.ui.cmdNo--;
-                if (rp.ui.cmdNo < 0) {
-                    rp.ui.cmdNo = 2;
-                }
-            }
-            if (code == KeyEvent.VK_DOWN) {
-                rp.ui.cmdNo++;
-                if (rp.ui.cmdNo > 2) {
-                    rp.ui.cmdNo = 0;
-                }
-            }
-            
-            if(code == KeyEvent.VK_Z) {
-                switch(rp.ui.cmdNo) {
-                    case 0:
-                        rp.gameState = rp.playState;
-                        break;
-                    case 1:
-                        //Later
-                        break;
-                    case 2:
-                        System.exit(0);
-                        break;
-                }
+        if (code == KeyEvent.VK_DOWN) {
+            rp.ui.cmdNo++;
+            if (rp.ui.cmdNo > 2) {
+                rp.ui.cmdNo = 0;
             }
         }
+        if (code == KeyEvent.VK_Z) {
+            switch (rp.ui.cmdNo) {
+                case 0:
+                    rp.gameState = States.PLAYSTATE;
+                    break;
+                case 1:
+                    //Later
+                    break;
+                case 2:
+                    System.exit(0);
+                    break;
+            }
+        }
+    }
 
-        if (rp.gameState == rp.playState) {
-            if (code == KeyEvent.VK_UP) {
-                upPress = true;
+    private void optionState(int code) {
+        if (code == KeyEvent.VK_ESCAPE) {
+            rp.gameState = States.PLAYSTATE;
+        }
+        if(code == KeyEvent.VK_Z) {
+            interactPressed = true;
+            //System.out.println("Interact Key is pressed");
+        }
+
+        int maxCmdNum = 0;
+        switch (rp.ui.subState) {
+            case 0:
+                maxCmdNum = 3;
+                break;
+            case 2:
+                maxCmdNum=1;
+                break;
+        }
+        if (code == KeyEvent.VK_UP) {
+            rp.ui.cmdNo--;
+            if (rp.ui.cmdNo < 0) {
+                rp.ui.cmdNo = maxCmdNum;
             }
-            if (code == KeyEvent.VK_DOWN) {
-                downPress = true;
-            }
-            if (code == KeyEvent.VK_LEFT) {
-                leftPress = true;
-            }
-            if (code == KeyEvent.VK_RIGHT) {
-                rightPress = true;
-            }
-            if (code == KeyEvent.VK_P) {
-                if (rp.gameState == rp.playState) {
-                    rp.gameState = rp.pauseState;
-                } else if (rp.gameState == rp.pauseState) {
-                    rp.gameState = rp.playState;
-                }
+        }
+        if (code == KeyEvent.VK_DOWN) {
+            rp.ui.cmdNo++;
+            if (rp.ui.cmdNo > maxCmdNum) {
+                rp.ui.cmdNo = 0;
             }
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-
         int code = e.getKeyCode();
 
         if (code == KeyEvent.VK_UP) {
@@ -103,6 +147,10 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_RIGHT) {
             rightPress = false;
         }
+        if (code == KeyEvent.VK_Z) {
+            interactPressed = false;
+        }
     }
+    
 
 }

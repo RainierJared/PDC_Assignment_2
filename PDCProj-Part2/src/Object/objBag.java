@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
  *
  * @author botor
  */
-public class objBag extends superObject{
+public final class objBag extends superObject{
 
     public objBag() {
         name = "Bag";
@@ -20,6 +20,11 @@ public class objBag extends superObject{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        collision = true;
+        this.setCollision();
+    }
+
+    @Override
+    public void setCollision() {
+        this.collision = true;
     }
 }
