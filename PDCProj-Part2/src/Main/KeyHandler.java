@@ -13,32 +13,50 @@ import java.awt.event.KeyListener;
  */
 public class KeyHandler implements KeyListener {
 
-    RPGPanel rp;
+    //Private RPGPanle object for this class
+    private final RPGPanel rp;
+
+    //Booleans that indicate which button has been pressed
     public boolean upPress, downPress, leftPress, rightPress, interactPressed;
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
-
+    //Class Constructor
     public KeyHandler(RPGPanel rp) {
         this.rp = rp;
         this.interactPressed = false;
     }
 
+    //Implemented KeyListener functions
+    //keyTyped() function is not neededs
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    //keyPressed function for keyboard input
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
         //Instruction State
+        
+        //Switch case for RPGPanel gameState
+        //Each case calls the function appropriate to their states
         switch (rp.gameState) {
+            
+            //For Instruction state
             case States.INSTRUCTIONSTATE:
                 instructionInput(code);
                 break;
+                
+            //For Title state
             case States.TITLESTATE:
                 titleInput(code);
                 break;
+                
+            //For Play state    
             case States.PLAYSTATE:
                 playInput(code);
                 break;
+                
+            //For Option state
             case States.OPTIONSTATE:
                 optionState(code);
                 break;
@@ -47,13 +65,18 @@ public class KeyHandler implements KeyListener {
         }
     }
 
+    //Private function for instruction state
     private void instructionInput(int code) {
         if (code == KeyEvent.VK_SPACE) {
-            rp.gameState = States.TITLESTATE;
+            rp.gameState = States.TITLESTATE;       //Changing gamestate to titlestate
         }
     }
 
+    //Private function for play state
     private void playInput(int code) {
+        
+        //For directional keys
+        //This program uses the arrow keys for movement
         if (code == KeyEvent.VK_UP) {
             upPress = true;
         }
@@ -66,12 +89,18 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_RIGHT) {
             rightPress = true;
         }
+        
+        //For option menu
+        //This program uses escape key for the options menu
         if (code == KeyEvent.VK_ESCAPE) {
             rp.gameState = States.OPTIONSTATE;
         }
     }
 
+    //Private function for title state
     private void titleInput(int code) {
+        
+        //Directional input for scrolling through the titlescreen menu
         if (code == KeyEvent.VK_UP) {
             rp.uiObj.commandNumber--;
             if (rp.uiObj.commandNumber < 0) {
@@ -84,7 +113,11 @@ public class KeyHandler implements KeyListener {
                 rp.uiObj.commandNumber = 0;
             }
         }
+        
+        //For the interaction key
         if (code == KeyEvent.VK_Z) {
+            //Switch case for the commandNumber variable
+            //Dictates where the cursor should be printed and what functions should be run
             switch (rp.uiObj.commandNumber) {
                 case 0:
                     //For New Game
@@ -105,38 +138,49 @@ public class KeyHandler implements KeyListener {
         }
     }
 
+    //Private function for option menu state
     private void optionState(int code) {
+        //Button to bring up the options menu
         if (code == KeyEvent.VK_ESCAPE) {
             rp.gameState = States.PLAYSTATE;
         }
+        
+        //Button for interaction button
         if (code == KeyEvent.VK_Z) {
             interactPressed = true;
-            //System.out.println("Interact Key is pressed");
         }
 
-        int maxCmdNum = 0;
+        //Switch case that ensures that users can't scroll 
+        //past the limit of the options menu
+        int maxCommandNo = 0;
         switch (rp.uiObj.subState) {
+            //For the options menu
             case 0:
-                maxCmdNum = 3;
+                maxCommandNo = 3;
                 break;
+            //For the quit menu in the options menu
             case 2:
-                maxCmdNum = 1;
+                maxCommandNo = 1;
                 break;
         }
+        
+        //Inputs for scrolling up and down the options menu
         if (code == KeyEvent.VK_UP) {
             rp.uiObj.commandNumber--;
             if (rp.uiObj.commandNumber < 0) {
-                rp.uiObj.commandNumber = maxCmdNum;
+                rp.uiObj.commandNumber = maxCommandNo;
             }
         }
         if (code == KeyEvent.VK_DOWN) {
             rp.uiObj.commandNumber++;
-            if (rp.uiObj.commandNumber > maxCmdNum) {
+            if (rp.uiObj.commandNumber > maxCommandNo) {
                 rp.uiObj.commandNumber = 0;
             }
         }
     }
 
+    //Private function implemented from KeyListener
+    //This function sets the booleans as false when the button is no longer pressed
     @Override
     public void keyReleased(KeyEvent e) {
         int code = e.getKeyCode();

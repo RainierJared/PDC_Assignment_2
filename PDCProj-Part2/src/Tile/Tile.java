@@ -10,7 +10,11 @@ import java.awt.image.BufferedImage;
  *
  * @author botor
  */
+
+//Tile class for TileManager.java
 public class Tile {
+    
+    //Creating BufferedImage object and setting collision as false
     public BufferedImage image;
     public boolean collision = false;
 }

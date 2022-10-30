@@ -8,9 +8,11 @@ package Main;
  *
  * @author jaredbotor
  */
+
+//Main Function of program
 public class Main {
 
-    public static void main(String[] args) {
-        RPGFrame obj = new RPGFrame();
-    }
+//    public static void main(String[] args) {
+//        RPGFrame obj = new RPGFrame();  //Creating RPGFrame object to start the program
+//    }
 }

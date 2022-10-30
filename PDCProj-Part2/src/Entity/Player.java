@@ -21,8 +21,8 @@ import javax.imageio.ImageIO;
 public final class Player extends Entity {
 
     //Private Variables and Objects
-    private RPGPanel rp;
-    private KeyHandler key;
+    private final RPGPanel rp;
+    private final KeyHandler key;
     private BufferedImage image = null;
 
     //Final values for the game's X and Y
@@ -55,24 +55,28 @@ public final class Player extends Entity {
         screenY = rp.SCREENHEIGHT / 2 - (rp.TILESIZE / 2);
 
         //Initializing values for user collision
-        solidArea = new Rectangle(8, 16, 32, 32);
-        defaultSolidAreaX = solidArea.x;
-        defaultSolidAreaY = solidArea.y;
+        solidPlayerArea = new Rectangle(8, 16, 32, 32);
+        defaultSolidAreaX = solidPlayerArea.x;
+        defaultSolidAreaY = solidPlayerArea.y;
 
         //Calling functions to set default settings and player images
         setDefaultSettings();
-        getPlayerImage();
+        setPlayerImage();
     }
 
-    public void setDefaultSettings() {
+    //Function that sets the player's position in the world, their speed, and what position they initally start in
+    private void setDefaultSettings() {
         worldX = rp.TILESIZE * 11;       //Player's pos on the world map
         worldY = rp.TILESIZE * 7;
         speed = 4;
         direction = "down";
     }
 
-    public void getPlayerImage() {
+    //Function that assigns the BufferedImage objects from Entity.java with the correct image according to the frame that
+    //the player is in
+    private void setPlayerImage() {
 
+        //This function also uses the same setup() function as the objects with the only difference being the images used
         up1 = setup("walk-up-1");
         up2 = setup("walk-up-2");
         down1 = setup("walk-down-1");
@@ -85,19 +89,23 @@ public final class Player extends Entity {
 
     }
 
-    public BufferedImage setup(String imgName) {
+    //This function deals with pre-scaling the images to improve the performance of the game
+    private BufferedImage setup(String imgName) {
+        //Creating Tools and BufferedImage objects
         Tools t = new Tools();
         BufferedImage scaledImg = null;
         try {
+            //Initializing the BufferedImage's image
             scaledImg = ImageIO.read(getClass().getResourceAsStream("/res/player/" + imgName + ".png"));
-            scaledImg = t.scaleImg(scaledImg, rp.TILESIZE, rp.TILESIZE);
+            scaledImg = t.scaleImg(scaledImg, rp.TILESIZE, rp.TILESIZE);        //Scaling the BufferedImages
         } catch (IOException e) {
             e.printStackTrace();
         }
         return scaledImg;
     }
 
-    public void setDefaultStats() {
+    //Function for setting the player's position sand stats when they choose 'New Game' on the title screen
+    public void setNewGameStats() {
         worldX = rp.TILESIZE * 11;       //Player's pos on the world map
         worldY = rp.TILESIZE * 7;
         direction = "down";
@@ -106,9 +114,16 @@ public final class Player extends Entity {
         itemCount = 0;
     }
 
+    //Function that updates the player's sprites based on his direction
     public void update() {
+        //Checks if update() is being called (created for test calls)
         if (updateCheck == true) {
+            
+            //If statement only works while a key is being pressed
             if (key.upPress || key.downPress || key.leftPress || key.rightPress) {
+                
+                //Checks if a direction key is being pressed
+                //If it's being pressed then set the direction depending on the key pressed
                 if (key.upPress) {
                     direction = "up";
                 } else if (key.downPress) {
@@ -120,7 +135,7 @@ public final class Player extends Entity {
                 }
 
                 //For tile collisions
-                entCollision = false;
+                setCollision = false;
                 rp.collisionHandlerObj.checkTile(this);
 
                 //For object collisions
@@ -128,7 +143,7 @@ public final class Player extends Entity {
                 pickUpObject(objIndex);
 
                 //If Player doesn't collide with anything, they can move
-                if (entCollision == false) {
+                if (setCollision == false) {
                     switch (direction) {
                         case "up":
                             worldY -= speed;
@@ -144,6 +159,8 @@ public final class Player extends Entity {
                             break;
                     }
                 }
+                
+                //Sprite coutner for sprite animation
                 spriteCounter++;
                 if (spriteCounter > 10) {
                     if (spriteNum == 1) {
@@ -158,74 +175,86 @@ public final class Player extends Entity {
 
     }
 
+    //Function that checks if any one of the boolean variables above are true
+    //If any of them are true, then they're set as null and are not drawn on the next load
     public void checkSave() {
         if (hasPhone == true) {
-            rp.objArray[0] = null;
-            rp.objArray[1] = null;
+            rp.itemArray[0] = null;
+            rp.itemArray[1] = null;
         }
         if (hasCoffee == true) {
-            rp.objArray[5] = null;
+            rp.itemArray[4] = null;
         }
         if (hasSugar == true) {
-            rp.objArray[6] = null;
+            rp.itemArray[5] = null;
         }
         if (hasMilk == true) {
-            rp.objArray[4] = null;
+            rp.itemArray[3] = null;
         }
         if (hasMug == true) {
-            rp.objArray[7] = null;
+            rp.itemArray[6] = null;
         }
     }
 
+    //Function that occurs whenever the player collides with any items that can be picked up
     public void pickUpObject(int i) {
+        
+        //Checks if itemCount == 5
         if (itemCount == 5) {
-            rp.assetHandler.drawCoffee();
+            //If it is, then call the function to draw the mug with coffee
+            rp.itemHandler.drawCoffee();
         }
 
         if (i != 999) {
-            String objName = rp.objArray[i].name;
+            String objName = rp.itemArray[i].name;
 
+            //Switch case that checks the collided item's name
+            //This function firstly increments the itemCount variable by one --
+            //sets it as 5 or 10 depending on the ending that the user chose -- and sets the
+            //element in the itemArray as null (removing the item) prints the message.
+            //Afterwards, it sets one of the few variables as true.
+            //If the player doesn't meet a certain criteria, then a message will print stating the problem
             switch (objName) {
                 case "Phone":
                     itemCount++;
-                    rp.objArray[i] = null;
+                    rp.itemArray[i] = null;
                     rp.uiObj.showMsg("Phone Acquired!");
                     hasPhone = true;
                     break;
                 case "Tea":
                     itemCount = 5;
-                    rp.objArray[i] = null;
+                    rp.itemArray[i] = null;
                     rp.uiObj.showMsg("Tea Drank!");
                     hasTea = true;
                     rp.uiObj.gameFinished = true;
                     break;
                 case "Coffee":
                     itemCount++;
-                    rp.objArray[i] = null;
+                    rp.itemArray[i] = null;
                     rp.uiObj.showMsg("Coffee Powder Acquired!");
                     hasCoffee = true;
                     break;
                 case "Sugar":
                     itemCount++;
-                    rp.objArray[i] = null;
+                    rp.itemArray[i] = null;
                     rp.uiObj.showMsg("Sugar Acquired!");
                     hasSugar = true;
                     break;
                 case "Milk":
                     itemCount++;
-                    rp.objArray[i] = null;
+                    rp.itemArray[i] = null;
                     rp.uiObj.showMsg("Milk Acquired!");
                     hasMilk = true;
                     break;
                 case "Mug":
                     itemCount++;
-                    rp.objArray[i] = null;
+                    rp.itemArray[i] = null;
                     rp.uiObj.showMsg("Empty Mug Acquired!");
                     hasMug = true;
                     break;
                 case "Door":
                     if (hasPhone == true) {
-                        rp.objArray[i] = null;
+                        rp.itemArray[i] = null;
                         rp.uiObj.showMsg("Door Opened!");
                     } else {
                         rp.uiObj.showMsg("Key item has not been acquired...");
@@ -233,7 +262,7 @@ public final class Player extends Entity {
                     break;
                 case "MugWithCoffee":
                     if (itemCount == 5) {
-                        rp.objArray[i] = null;
+                        rp.itemArray[i] = null;
                         rp.uiObj.showMsg("Coffee Acquired!");
                         itemCount = 10;
                         hasCoffee = true;
@@ -246,10 +275,14 @@ public final class Player extends Entity {
         }
     }
 
+    //Draw function for the sprite animation when the player moves
     public void draw(Graphics2D g2) {
-
         image = null;
 
+        //Switch case statement that checks the player's direction
+        //Each direction has two if statements that checks the value of spriteNum
+        //If spriteNum == 1, then first frame of the walking animation is drawn
+        //If spriteNum == 2, then the second frame of the walking animation is drawn
         switch (direction) {
             case "up":
                 if (spriteNum == 1) {
@@ -284,6 +317,7 @@ public final class Player extends Entity {
                 }
                 break;
         }
+        //Draws the image
         g2.drawImage(image, screenX, screenY, rp.TILESIZE, rp.TILESIZE, null);
     }
 }

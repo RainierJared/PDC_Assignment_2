@@ -5,6 +5,7 @@
 package Main;
 
 import Entity.Player;
+import Login.LoginForm;
 import Object.superObject;
 import Tile.TileManager;
 import data.SaveLoad;
@@ -53,17 +54,21 @@ public class RPGPanel extends JPanel implements Runnable {
     public Thread gameThread;
     public CollisionHandler collisionHandlerObj = new CollisionHandler(this);
     public Player playerObj = new Player(this, keyHandlerObj);
-    public AssetHandler assetHandler = new AssetHandler(this);
+    public ItemHandler itemHandler = new ItemHandler(this);
     public UI uiObj = new UI(this);
+    public LoginForm logForm = new LoginForm(this);
 
     //Objects
-    public superObject[] objArray = new superObject[10];
+    public superObject[] itemArray = new superObject[10];
 
     //States
     int gameState;
     
     //Variable for test case
     double drawInterval;
+    
+    public String username;
+    public String password;
 
     //Constructor
     public RPGPanel() {
@@ -77,7 +82,7 @@ public class RPGPanel extends JPanel implements Runnable {
     //Function that sets up the map, objects, and ensures that the game starts in the correct
     //game state
     public void setupMap() {
-        assetHandler.setObject();
+        itemHandler.setObject();
         gameState = States.INSTRUCTIONSTATE;
     }
 
@@ -89,8 +94,8 @@ public class RPGPanel extends JPanel implements Runnable {
 
     //Function that resets the positions of objects and the player
     public void restart() {
-        playerObj.setDefaultStats();
-        assetHandler.setObject();
+        playerObj.setNewGameStats();
+        itemHandler.setObject();
     }
 
     //Run function for thread
@@ -149,7 +154,7 @@ public class RPGPanel extends JPanel implements Runnable {
                 //Tiles
                 tileManagerObj.draw(g2);
                 //Objects
-                for (superObject sObj1 : objArray) {
+                for (superObject sObj1 : itemArray) {
                     if (sObj1 != null) {
                         sObj1.draw(g2, this);
                     }
