@@ -27,7 +27,7 @@ public class TileManager {
     public TileManager(RPGPanel rp) {
         this.rp = rp;
         tile = new Tile[10];
-        mapTileNo = new int[rp.maxWorldCols][rp.maxWorldRows];
+        mapTileNo = new int[rp.MAXWORLDCOL][rp.MAXWORLDROW];
         getTileImage();
         loadMap();
     }
@@ -47,7 +47,7 @@ public class TileManager {
 
             tile[index] = new Tile();
             tile[index].image = ImageIO.read(getClass().getResourceAsStream("/res/tile/" + imgName + ".png"));
-            tile[index].image = t.scaleImg(tile[index].image, rp.tileSize, rp.tileSize);
+            tile[index].image = t.scaleImg(tile[index].image, rp.TILESIZE, rp.TILESIZE);
             tile[index].collision = collision;
 
         } catch (IOException e) {
@@ -63,10 +63,10 @@ public class TileManager {
             int col = 0;
             int row = 0;
 
-            while (col < rp.maxWorldCols && row < rp.maxWorldRows) {
+            while (col < rp.MAXWORLDCOL && row < rp.MAXWORLDROW) {
                 String line = br.readLine();
 
-                while (col < rp.maxWorldCols) {
+                while (col < rp.MAXWORLDCOL) {
                     String numbers[] = line.split(" ");
 
                     int num = Integer.parseInt(numbers[col]);
@@ -74,7 +74,7 @@ public class TileManager {
                     mapTileNo[col][row] = num;
                     col++;
                 }
-                if (col == rp.maxWorldCols) {
+                if (col == rp.MAXWORLDCOL) {
                     col = 0;
                     row++;
                 }
@@ -88,29 +88,29 @@ public class TileManager {
         int worldCols = 0;
         int worldRows = 0;
 
-        while (worldCols < rp.maxWorldCols && worldRows < rp.maxWorldRows) {
+        while (worldCols < rp.MAXWORLDCOL && worldRows < rp.MAXWORLDROW) {
             int tileNo = mapTileNo[worldCols][worldRows];
 
-            int worldX = worldCols * rp.tileSize;
-            int worldY = worldRows * rp.tileSize;
-            int screenX = worldX - rp.player.worldX + rp.player.screenX;
-            int screenY = worldY - rp.player.worldY + rp.player.screenY;
+            int worldX = worldCols * rp.TILESIZE;
+            int worldY = worldRows * rp.TILESIZE;
+            int screenX = worldX - rp.playerObj.worldX + rp.playerObj.screenX;
+            int screenY = worldY - rp.playerObj.worldY + rp.playerObj.screenY;
 
             //Improving tile drawing efficiency
             //Checks the players position from the centre of the screen in all four quadrants
             //If a tile is within the four quadrants (-screenX, +screenX, -screenY, +screenY)
             //The tile will be rendered
-            if (worldX + rp.tileSize > rp.player.worldX - rp.player.screenX
-                    && worldX - rp.tileSize < rp.player.worldX + rp.player.screenX
-                    && worldY + rp.tileSize > rp.player.worldY - rp.player.screenY
-                    && worldY - rp.tileSize < rp.player.worldY + rp.player.screenY) {
+            if (worldX + rp.TILESIZE > rp.playerObj.worldX - rp.playerObj.screenX
+                    && worldX - rp.TILESIZE < rp.playerObj.worldX + rp.playerObj.screenX
+                    && worldY + rp.TILESIZE > rp.playerObj.worldY - rp.playerObj.screenY
+                    && worldY - rp.TILESIZE < rp.playerObj.worldY + rp.playerObj.screenY) {
 
-                g2.drawImage(tile[tileNo].image, screenX, screenY, rp.tileSize, rp.tileSize, null);
+                g2.drawImage(tile[tileNo].image, screenX, screenY, rp.TILESIZE, rp.TILESIZE, null);
 
             }
             worldCols++;
 
-            if (worldCols == rp.maxWorldCols) {
+            if (worldCols == rp.MAXWORLDCOL) {
                 worldCols = 0;
                 worldRows++;
             }

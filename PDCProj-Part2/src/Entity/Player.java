@@ -17,39 +17,56 @@ import javax.imageio.ImageIO;
  *
  * @author jaredbotor
  */
-public class Player extends Entity {
+//Player class for the game
+public final class Player extends Entity {
 
-    RPGPanel rp;
-    KeyHandler key;
-    BufferedImage image = null;
+    //Private Variables and Objects
+    private RPGPanel rp;
+    private KeyHandler key;
+    private BufferedImage image = null;
 
+    //Final values for the game's X and Y
     public final int screenX;
     public final int screenY;
 
-    public int hasItems = 0;
+    //Variable that counts how many item the user currently holds
+    public int itemCount = 0;
 
-    boolean hasPhone = false;
+    //Different boolean variables for when the user reloads their save
+    //The program will decide to draw or not draw certain items depending on the state of each booleans
+    public boolean hasPhone = false;
     public boolean hasTea = false;
     public boolean hasCoffee = false;
+    public boolean hasSugar = false;
+    public boolean hasMilk = false;
+    public boolean hasMug = false;
+    public boolean updateCheck = false;
 
+    
+    //Constructor that takes in an RPGPanel and KeyHandler object
     public Player(RPGPanel rp, KeyHandler key) {
+        
+        //Initializes the objects
         this.rp = rp;
         this.key = key;
 
-        screenX = rp.screenWidth / 2 - (rp.tileSize / 2);
-        screenY = rp.screenHeight / 2 - (rp.tileSize / 2);
+        //Initializing the size of the screen's x and y values
+        screenX = rp.SCREENWIDTH / 2 - (rp.TILESIZE / 2);
+        screenY = rp.SCREENHEIGHT / 2 - (rp.TILESIZE / 2);
 
+        //Initializing values for user collision
         solidArea = new Rectangle(8, 16, 32, 32);
         defaultSolidAreaX = solidArea.x;
         defaultSolidAreaY = solidArea.y;
 
+        //Calling functions to set default settings and player images
         setDefaultSettings();
         getPlayerImage();
     }
 
     public void setDefaultSettings() {
-        worldX = rp.tileSize * 11;       //Player's pos on the world map
-        worldY = rp.tileSize * 7;
+        worldX = rp.TILESIZE * 11;       //Player's pos on the world map
+        worldY = rp.TILESIZE * 7;
         speed = 4;
         direction = "down";
     }
@@ -73,123 +90,156 @@ public class Player extends Entity {
         BufferedImage scaledImg = null;
         try {
             scaledImg = ImageIO.read(getClass().getResourceAsStream("/res/player/" + imgName + ".png"));
-            scaledImg = t.scaleImg(scaledImg, rp.tileSize, rp.tileSize);
+            scaledImg = t.scaleImg(scaledImg, rp.TILESIZE, rp.TILESIZE);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return scaledImg;
     }
 
+    public void setDefaultStats() {
+        worldX = rp.TILESIZE * 11;       //Player's pos on the world map
+        worldY = rp.TILESIZE * 7;
+        direction = "down";
+        hasTea = false;
+        hasCoffee = false;
+        itemCount = 0;
+    }
+
     public void update() {
+        if (updateCheck == true) {
+            if (key.upPress || key.downPress || key.leftPress || key.rightPress) {
+                if (key.upPress) {
+                    direction = "up";
+                } else if (key.downPress) {
+                    direction = "down";
+                } else if (key.leftPress) {
+                    direction = "left";
+                } else if (key.rightPress) {
+                    direction = "right";
+                }
 
-        if (key.upPress || key.downPress || key.leftPress || key.rightPress) {
-            if (key.upPress) {
-                direction = "up";
-            } else if (key.downPress) {
-                direction = "down";
-            } else if (key.leftPress) {
-                direction = "left";
-            } else if (key.rightPress) {
-                direction = "right";
-            }
+                //For tile collisions
+                entCollision = false;
+                rp.collisionHandlerObj.checkTile(this);
 
-            //For tile collisions
-            entCollision = false;
-            rp.ch.checkTile(this);
+                //For object collisions
+                int objIndex = rp.collisionHandlerObj.checkObject(this, true);
+                pickUpObject(objIndex);
 
-            //For object collisions
-            int objIndex = rp.ch.checkObject(this, true);
-            pickUpObject(objIndex);
-
-            //If Player doesn't collide with anything, they can move
-            if (entCollision == false) {
-                switch (direction) {
-                    case "up":
-                        worldY -= speed;
-                        break;
-                    case "down":
-                        worldY += speed;
-                        break;
-                    case "left":
-                        worldX -= speed;
-                        break;
-                    case "right":
-                        worldX += speed;
-                        break;
+                //If Player doesn't collide with anything, they can move
+                if (entCollision == false) {
+                    switch (direction) {
+                        case "up":
+                            worldY -= speed;
+                            break;
+                        case "down":
+                            worldY += speed;
+                            break;
+                        case "left":
+                            worldX -= speed;
+                            break;
+                        case "right":
+                            worldX += speed;
+                            break;
+                    }
+                }
+                spriteCounter++;
+                if (spriteCounter > 10) {
+                    if (spriteNum == 1) {
+                        spriteNum = 2;
+                    } else if (spriteNum == 2) {
+                        spriteNum = 1;
+                    }
+                    spriteCounter = 0;
                 }
             }
-            spriteCounter++;
-            if (spriteCounter > 10) {
-                if (spriteNum == 1) {
-                    spriteNum = 2;
-                } else if (spriteNum == 2) {
-                    spriteNum = 1;
-                }
-                spriteCounter = 0;
-            }
+        }
+
+    }
+
+    public void checkSave() {
+        if (hasPhone == true) {
+            rp.objArray[0] = null;
+            rp.objArray[1] = null;
+        }
+        if (hasCoffee == true) {
+            rp.objArray[5] = null;
+        }
+        if (hasSugar == true) {
+            rp.objArray[6] = null;
+        }
+        if (hasMilk == true) {
+            rp.objArray[4] = null;
+        }
+        if (hasMug == true) {
+            rp.objArray[7] = null;
         }
     }
 
     public void pickUpObject(int i) {
-        if(hasItems == 3) {
-            rp.ah.drawCoffee();
+        if (itemCount == 5) {
+            rp.assetHandler.drawCoffee();
         }
-        
+
         if (i != 999) {
-            String objName = rp.sObj[i].name;
+            String objName = rp.objArray[i].name;
 
             switch (objName) {
                 case "Phone":
-                    hasItems--;
-                    rp.sObj[i] = null;
-                    rp.ui.showMsg("Phone Acquired!");
+                    itemCount++;
+                    rp.objArray[i] = null;
+                    rp.uiObj.showMsg("Phone Acquired!");
                     hasPhone = true;
                     break;
                 case "Tea":
-                    hasItems += 5;
-                    rp.sObj[i] = null;
-                    rp.ui.showMsg("Tea Drank!");
+                    itemCount = 5;
+                    rp.objArray[i] = null;
+                    rp.uiObj.showMsg("Tea Drank!");
                     hasTea = true;
-                    rp.ui.gameFinished = true;
+                    rp.uiObj.gameFinished = true;
                     break;
                 case "Coffee":
-                    hasItems++;
-                    rp.sObj[i] = null;
-                    rp.ui.showMsg("Coffee Powder Acquired!");
+                    itemCount++;
+                    rp.objArray[i] = null;
+                    rp.uiObj.showMsg("Coffee Powder Acquired!");
+                    hasCoffee = true;
                     break;
                 case "Sugar":
-                    hasItems++;
-                    rp.sObj[i] = null;
-                    rp.ui.showMsg("Sugar Acquired!");
+                    itemCount++;
+                    rp.objArray[i] = null;
+                    rp.uiObj.showMsg("Sugar Acquired!");
+                    hasSugar = true;
                     break;
                 case "Milk":
-                    hasItems++;
-                    rp.sObj[i] = null;
-                    rp.ui.showMsg("Milk Acquired!");
+                    itemCount++;
+                    rp.objArray[i] = null;
+                    rp.uiObj.showMsg("Milk Acquired!");
+                    hasMilk = true;
                     break;
                 case "Mug":
-                    hasItems++;
-                    rp.sObj[i] = null;
-                    rp.ui.showMsg("Empty Mug Acquired!");
+                    itemCount++;
+                    rp.objArray[i] = null;
+                    rp.uiObj.showMsg("Empty Mug Acquired!");
+                    hasMug = true;
                     break;
                 case "Door":
                     if (hasPhone == true) {
-                        rp.sObj[i] = null;
-                        rp.ui.showMsg("Door Opened!");
-                        hasPhone = false;
+                        rp.objArray[i] = null;
+                        rp.uiObj.showMsg("Door Opened!");
                     } else {
-                        rp.ui.showMsg("Key item has not been acquired...");
+                        rp.uiObj.showMsg("Key item has not been acquired...");
                     }
                     break;
                 case "MugWithCoffee":
-                    if (hasItems == 3) {
-                        rp.sObj[i] = null;
-                        rp.ui.showMsg("Coffee Acquired!");
-                        hasItems = 10;
+                    if (itemCount == 5) {
+                        rp.objArray[i] = null;
+                        rp.uiObj.showMsg("Coffee Acquired!");
+                        itemCount = 10;
                         hasCoffee = true;
-                        rp.ui.gameFinished = true;
+                        rp.uiObj.gameFinished = true;
                     } else {
-                        rp.ui.showMsg("Need Coffee level of at least 3 to acquire...");
+                        rp.uiObj.showMsg("Need Coffee level of at least 5 to acquire...");
                     }
                     break;
             }
@@ -197,8 +247,6 @@ public class Player extends Entity {
     }
 
     public void draw(Graphics2D g2) {
-//        g2.setColor(Color.white);
-//        g2.fillRect(x, y, rp.tileSize, rp.tileSize);
 
         image = null;
 
@@ -236,6 +284,6 @@ public class Player extends Entity {
                 }
                 break;
         }
-        g2.drawImage(image, screenX, screenY, rp.tileSize, rp.tileSize, null);
+        g2.drawImage(image, screenX, screenY, rp.TILESIZE, rp.TILESIZE, null);
     }
 }

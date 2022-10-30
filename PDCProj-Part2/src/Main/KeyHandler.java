@@ -73,26 +73,32 @@ public class KeyHandler implements KeyListener {
 
     private void titleInput(int code) {
         if (code == KeyEvent.VK_UP) {
-            rp.ui.cmdNo--;
-            if (rp.ui.cmdNo < 0) {
-                rp.ui.cmdNo = 2;
+            rp.uiObj.commandNumber--;
+            if (rp.uiObj.commandNumber < 0) {
+                rp.uiObj.commandNumber = 2;
             }
         }
         if (code == KeyEvent.VK_DOWN) {
-            rp.ui.cmdNo++;
-            if (rp.ui.cmdNo > 2) {
-                rp.ui.cmdNo = 0;
+            rp.uiObj.commandNumber++;
+            if (rp.uiObj.commandNumber > 2) {
+                rp.uiObj.commandNumber = 0;
             }
         }
         if (code == KeyEvent.VK_Z) {
-            switch (rp.ui.cmdNo) {
+            switch (rp.uiObj.commandNumber) {
                 case 0:
+                    //For New Game
+                    rp.restart();
                     rp.gameState = States.PLAYSTATE;
                     break;
                 case 1:
-                    //Later
+                    //For Loading Save
+                    rp.saveLoad.load();
+                    rp.playerObj.checkSave();
+                    rp.gameState = States.PLAYSTATE;
                     break;
                 case 2:
+                    //For Exiting
                     System.exit(0);
                     break;
             }
@@ -103,30 +109,30 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_ESCAPE) {
             rp.gameState = States.PLAYSTATE;
         }
-        if(code == KeyEvent.VK_Z) {
+        if (code == KeyEvent.VK_Z) {
             interactPressed = true;
             //System.out.println("Interact Key is pressed");
         }
 
         int maxCmdNum = 0;
-        switch (rp.ui.subState) {
+        switch (rp.uiObj.subState) {
             case 0:
                 maxCmdNum = 3;
                 break;
             case 2:
-                maxCmdNum=1;
+                maxCmdNum = 1;
                 break;
         }
         if (code == KeyEvent.VK_UP) {
-            rp.ui.cmdNo--;
-            if (rp.ui.cmdNo < 0) {
-                rp.ui.cmdNo = maxCmdNum;
+            rp.uiObj.commandNumber--;
+            if (rp.uiObj.commandNumber < 0) {
+                rp.uiObj.commandNumber = maxCmdNum;
             }
         }
         if (code == KeyEvent.VK_DOWN) {
-            rp.ui.cmdNo++;
-            if (rp.ui.cmdNo > maxCmdNum) {
-                rp.ui.cmdNo = 0;
+            rp.uiObj.commandNumber++;
+            if (rp.uiObj.commandNumber > maxCmdNum) {
+                rp.uiObj.commandNumber = 0;
             }
         }
     }
@@ -151,6 +157,5 @@ public class KeyHandler implements KeyListener {
             interactPressed = false;
         }
     }
-    
 
 }

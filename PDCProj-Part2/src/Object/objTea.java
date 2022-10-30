@@ -21,7 +21,7 @@ public final class objTea extends superObject {
         name = "Tea";
         try {
             image = ImageIO.read(getClass().getResourceAsStream("/res/objects/mug-tea.png"));
-            t.scaleImg(image, rp.tileSize, rp.tileSize);
+            t.scaleImg(image, rp.TILESIZE, rp.TILESIZE);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -24,43 +24,43 @@ public class CollisionHandler {
         int entTopWorldY = ent.worldY + ent.solidArea.y;
         int entBottomWorldY = ent.worldY + ent.solidArea.y + ent.solidArea.height;
 
-        int entLeftCol = entLeftWorldX / rp.tileSize;
-        int entRightCol = entRightWorldX / rp.tileSize;
-        int entTopRow = entTopWorldY / rp.tileSize;
-        int entBottomRow = entBottomWorldY / rp.tileSize;
+        int entLeftCol = entLeftWorldX / rp.TILESIZE;
+        int entRightCol = entRightWorldX / rp.TILESIZE;
+        int entTopRow = entTopWorldY / rp.TILESIZE;
+        int entBottomRow = entBottomWorldY / rp.TILESIZE;
 
         int tileNo1, tileNo2;
 
         switch (ent.direction) {
             case "up":
-                entTopRow = (entTopWorldY - ent.speed) / rp.tileSize;
-                tileNo1 = rp.tm.mapTileNo[entLeftCol][entTopRow];
-                tileNo2 = rp.tm.mapTileNo[entRightCol][entTopRow];
-                if (rp.tm.tile[tileNo1].collision == true || rp.tm.tile[tileNo2].collision == true) {
+                entTopRow = (entTopWorldY - ent.speed) / rp.TILESIZE;
+                tileNo1 = rp.tileManagerObj.mapTileNo[entLeftCol][entTopRow];
+                tileNo2 = rp.tileManagerObj.mapTileNo[entRightCol][entTopRow];
+                if (rp.tileManagerObj.tile[tileNo1].collision == true || rp.tileManagerObj.tile[tileNo2].collision == true) {
                     ent.entCollision = true;
                 }
                 break;
             case "down":
-                entBottomRow = (entBottomWorldY + ent.speed) / rp.tileSize;
-                tileNo1 = rp.tm.mapTileNo[entLeftCol][entBottomRow];
-                tileNo2 = rp.tm.mapTileNo[entRightCol][entBottomRow];
-                if (rp.tm.tile[tileNo1].collision == true || rp.tm.tile[tileNo2].collision == true) {
+                entBottomRow = (entBottomWorldY + ent.speed) / rp.TILESIZE;
+                tileNo1 = rp.tileManagerObj.mapTileNo[entLeftCol][entBottomRow];
+                tileNo2 = rp.tileManagerObj.mapTileNo[entRightCol][entBottomRow];
+                if (rp.tileManagerObj.tile[tileNo1].collision == true || rp.tileManagerObj.tile[tileNo2].collision == true) {
                     ent.entCollision = true;
                 }
                 break;
             case "left":
-                entLeftCol = (entLeftWorldX - ent.speed) / rp.tileSize;
-                tileNo1 = rp.tm.mapTileNo[entLeftCol][entTopRow];
-                tileNo2 = rp.tm.mapTileNo[entLeftCol][entBottomRow];
-                if (rp.tm.tile[tileNo1].collision == true || rp.tm.tile[tileNo2].collision == true) {
+                entLeftCol = (entLeftWorldX - ent.speed) / rp.TILESIZE;
+                tileNo1 = rp.tileManagerObj.mapTileNo[entLeftCol][entTopRow];
+                tileNo2 = rp.tileManagerObj.mapTileNo[entLeftCol][entBottomRow];
+                if (rp.tileManagerObj.tile[tileNo1].collision == true || rp.tileManagerObj.tile[tileNo2].collision == true) {
                     ent.entCollision = true;
                 }
                 break;
             case "right":
-                entRightCol = (entRightWorldX + ent.speed) / rp.tileSize;
-                tileNo1 = rp.tm.mapTileNo[entRightCol][entTopRow];
-                tileNo2 = rp.tm.mapTileNo[entRightCol][entBottomRow];
-                if (rp.tm.tile[tileNo1].collision == true || rp.tm.tile[tileNo2].collision == true) {
+                entRightCol = (entRightWorldX + ent.speed) / rp.TILESIZE;
+                tileNo1 = rp.tileManagerObj.mapTileNo[entRightCol][entTopRow];
+                tileNo2 = rp.tileManagerObj.mapTileNo[entRightCol][entBottomRow];
+                if (rp.tileManagerObj.tile[tileNo1].collision == true || rp.tileManagerObj.tile[tileNo2].collision == true) {
                     ent.entCollision = true;
                 }
                 break;
@@ -71,21 +71,21 @@ public class CollisionHandler {
     public int checkObject(Entity ent, boolean player) {
         int index = 999;
 
-        for (int i = 0; i < rp.sObj.length; i++) {
-            if (rp.sObj[i] != null) {
+        for (int i = 0; i < rp.objArray.length; i++) {
+            if (rp.objArray[i] != null) {
                 //Get ent's solid area position
                 ent.solidArea.x = ent.worldX + ent.solidArea.x;
                 ent.solidArea.y = ent.worldY + ent.solidArea.y;
 
                 //Get the object's solid area position
-                rp.sObj[i].solidArea.x = rp.sObj[i].worldX + rp.sObj[i].solidArea.x;
-                rp.sObj[i].solidArea.y = rp.sObj[i].worldY + rp.sObj[i].solidArea.y;
+                rp.objArray[i].solidArea.x = rp.objArray[i].worldX + rp.objArray[i].solidArea.x;
+                rp.objArray[i].solidArea.y = rp.objArray[i].worldY + rp.objArray[i].solidArea.y;
 
                 switch (ent.direction) {
                     case "up":
                         ent.solidArea.y -= ent.speed;
-                        if (ent.solidArea.intersects(rp.sObj[i].solidArea)) {
-                            if (rp.sObj[i].collision == true) {
+                        if (ent.solidArea.intersects(rp.objArray[i].solidArea)) {
+                            if (rp.objArray[i].collision == true) {
                                 ent.entCollision = true;
                             }
                             if (player == true) {
@@ -95,8 +95,8 @@ public class CollisionHandler {
                         break;
                     case "down":
                         ent.solidArea.y += ent.speed;
-                        if (ent.solidArea.intersects(rp.sObj[i].solidArea)) {
-                            if (rp.sObj[i].collision == true) {
+                        if (ent.solidArea.intersects(rp.objArray[i].solidArea)) {
+                            if (rp.objArray[i].collision == true) {
                                 ent.entCollision = true;
                             }
                             if (player == true) {
@@ -106,8 +106,8 @@ public class CollisionHandler {
                         break;
                     case "left":
                         ent.solidArea.x -= ent.speed;
-                        if (ent.solidArea.intersects(rp.sObj[i].solidArea)) {
-                            if (rp.sObj[i].collision == true) {
+                        if (ent.solidArea.intersects(rp.objArray[i].solidArea)) {
+                            if (rp.objArray[i].collision == true) {
                                 ent.entCollision = true;
                             }
                             if (player == true) {
@@ -117,8 +117,8 @@ public class CollisionHandler {
                         break;
                     case "right":
                         ent.solidArea.x += ent.speed;
-                        if (ent.solidArea.intersects(rp.sObj[i].solidArea)) {
-                            if (rp.sObj[i].collision == true) {
+                        if (ent.solidArea.intersects(rp.objArray[i].solidArea)) {
+                            if (rp.objArray[i].collision == true) {
                                 ent.entCollision = true;
                             }
                             if (player == true) {
@@ -129,8 +129,8 @@ public class CollisionHandler {
                 }
                 ent.solidArea.x = ent.defaultSolidAreaX;
                 ent.solidArea.y = ent.defaultSolidAreaY;
-                rp.sObj[i].solidArea.x = rp.sObj[i].defaultSolidAreaX;
-                rp.sObj[i].solidArea.y = rp.sObj[i].defaultSolidAreaY;
+                rp.objArray[i].solidArea.x = rp.objArray[i].defaultSolidAreaX;
+                rp.objArray[i].solidArea.y = rp.objArray[i].defaultSolidAreaY;
 
             }
         }

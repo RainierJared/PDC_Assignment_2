@@ -22,7 +22,7 @@ public final class objDoor extends superObject {
 
         try {
             image = ImageIO.read(getClass().getResourceAsStream("/res/objects/door.png"));
-            t.scaleImg(image, rp.tileSize, rp.tileSize);
+            t.scaleImg(image, rp.TILESIZE, rp.TILESIZE);
 
         } catch (IOException e) {
             e.printStackTrace();

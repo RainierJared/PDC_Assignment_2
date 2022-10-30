@@ -26,14 +26,14 @@ public abstract class superObject {
     Tools t = new Tools();
 
     public void draw(Graphics2D g2, RPGPanel rp) {
-        int screenX = worldX - rp.player.worldX + rp.player.screenX;
-        int screenY = worldY - rp.player.worldY + rp.player.screenY;
+        int screenX = worldX - rp.playerObj.worldX + rp.playerObj.screenX;
+        int screenY = worldY - rp.playerObj.worldY + rp.playerObj.screenY;
 
-        if (worldX + rp.tileSize > rp.player.worldX - rp.player.screenX
-                && worldX - rp.tileSize < rp.player.worldX + rp.player.screenX
-                && worldY + rp.tileSize > rp.player.worldY - rp.player.screenY
-                && worldY - rp.tileSize < rp.player.worldY + rp.player.screenY) {
-            g2.drawImage(image, screenX, screenY, rp.tileSize, rp.tileSize, null);
+        if (worldX + rp.TILESIZE > rp.playerObj.worldX - rp.playerObj.screenX
+                && worldX - rp.TILESIZE < rp.playerObj.worldX + rp.playerObj.screenX
+                && worldY + rp.TILESIZE > rp.playerObj.worldY - rp.playerObj.screenY
+                && worldY - rp.TILESIZE < rp.playerObj.worldY + rp.playerObj.screenY) {
+            g2.drawImage(image, screenX, screenY, rp.TILESIZE, rp.TILESIZE, null);
 
         }
     }

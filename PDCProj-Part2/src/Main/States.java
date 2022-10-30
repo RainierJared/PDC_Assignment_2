@@ -8,10 +8,16 @@ package Main;
  *
  * @author botor
  */
+
+//Enum for various states used in the game
 public abstract class States {
 
     public static final int TITLESTATE = 0;
     public static final int PLAYSTATE = 1;
     public static final int OPTIONSTATE = 2;
     public static final int INSTRUCTIONSTATE = 3;
+    
+    //Enums that are for the ending message
+    public static final int COFFEE_ENDING = 4;
+    public static final int TEA_ENDING = 5;
 }

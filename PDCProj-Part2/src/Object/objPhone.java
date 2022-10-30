@@ -21,7 +21,7 @@ public final class objPhone extends superObject {
         name = "Phone";
         try {
             image = ImageIO.read(getClass().getResourceAsStream("/res/objects/phone.png"));
-            t.scaleImg(image, rp.tileSize, rp.tileSize);
+            t.scaleImg(image, rp.TILESIZE, rp.TILESIZE);
 
         } catch (IOException e) {
             e.printStackTrace();

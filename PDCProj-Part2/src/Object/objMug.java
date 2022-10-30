@@ -19,7 +19,7 @@ public final class objMug extends superObject {
         name = "Mug";
         try {
             image = ImageIO.read(getClass().getResourceAsStream("/res/objects/mug.png"));
-            t.scaleImg(image, rp.tileSize, rp.tileSize);
+            t.scaleImg(image, rp.TILESIZE, rp.TILESIZE);
 
         } catch (IOException e) {
             e.printStackTrace();

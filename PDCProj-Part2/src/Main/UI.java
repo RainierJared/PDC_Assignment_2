@@ -37,12 +37,13 @@ public class UI {
     //Public
     //--------------
     //Integer
-    public int cmdNo = 0;
+    public int commandNumber = 0;
     public int subState = 0;
 
     //Boolean
     public boolean gameFinished = false;
 
+    //Default constructor that takes in an RPGPanel object
     public UI(RPGPanel rp) {
         this.rp = rp;
         this.t = new Tools();
@@ -51,109 +52,162 @@ public class UI {
 
     }
 
+    //Function for showing the congratulation message
     public void showMsg(String text) {
         message = text;
         messageOn = true;
     }
 
+    //The draw function of UI
     public void draw(Graphics2D g2) {
-        this.g2 = g2;
+        this.g2 = g2;   //Initializing the Graphics2D variable
         //Play State
-        if (rp.gameState == States.PLAYSTATE) {
-            drawPlayScreen();
-        }
-        //Title State
-        if (rp.gameState == States.TITLESTATE) {
-            drawTitleScreen();
-        }
-        //Instruction State
-        if (rp.gameState == States.INSTRUCTIONSTATE) {
-            drawInstructionScreen();
-        }
-        //Option State
-        if (rp.gameState == States.OPTIONSTATE) {
-            drawOptionScreen();
+
+        switch (rp.gameState) {
+            case States.PLAYSTATE:
+                drawPlayScreen();
+                break;
+            case States.TITLESTATE:
+                drawTitleScreen();
+                break;
+            case States.INSTRUCTIONSTATE:
+                drawInstructionScreen();
+                break;
+            case States.OPTIONSTATE:
+                drawOptionScreen();
+                break;
+            default:
+                drawTitleScreen();
+                break;
         }
     }
 
+    //Private function for drawing the option screen
     private void drawOptionScreen() {
+        //Setting the font's color, face, and size
         g2.setColor(Color.white);
         g2.setFont(new Font("Arial", Font.PLAIN, 20));
 
         //Sub Window
-        int frameX = rp.tileSize * 4;
-        int frameY = rp.tileSize;
-        int frameWidth = rp.tileSize * 8;
-        int frameHeight = rp.tileSize * 10;
+        //Creating the size of the window
+        int frameX = rp.TILESIZE * 4;
+        int frameY = rp.TILESIZE;
+        int frameWidth = rp.TILESIZE * 8;
+        int frameHeight = rp.TILESIZE * 10;
 
+        //Drawing the options window
         drawSubWindow(frameX, frameY, frameWidth, frameHeight);
 
+        //switch case for substate which dictates what page the user is on in options
         switch (subState) {
             case 0:
-                optionsTop(frameX, frameY);
+                optionsTop(frameX, frameY); //Draws the base option screen
                 break;
             case 1:
-                optionsControl(frameX, frameY);
+                optionsControl(frameX, frameY); //Draws the control screen
                 break;
             case 2:
-                optionsQuit(frameX, frameY);
+                optionsQuit(frameX, frameY);    //Draws the quit screen
+                break;
+            case 3:
+                optionSave(frameX, frameY); //Draws the save screen
                 break;
         }
-        rp.key.interactPressed = false;
+        rp.keyHandlerObj.interactPressed = false;   //Setting the boolean for interactPressed to false
     }
 
+    //Function to print the cursor beside each option relative to the value of commandNumber
+    private void cursor(int inCommandNo, int subStateValue, int outCommandNo, int textX, int textY) {
+        if (commandNumber == inCommandNo) {
+            g2.drawString(">", textX - 25, textY);
+            //
+            if (rp.keyHandlerObj.interactPressed == true) {
+                subState = subStateValue;
+                commandNumber = outCommandNo;
+            }
+        }
+    }
+
+    //Another version of the function that prints the cursor beside each option for the titlescreen
+    //This version only takes in the commandNumber and x and y position of the cursor
+    private void cursor(int inCommandNumber, int x, int y) {
+        if (commandNumber == inCommandNumber) {
+            g2.drawString(">", x - rp.TILESIZE, y);
+        }
+    }
+
+    //Function for the base option screen
+    //All the optionsX functions are all identical; the only difference is the message that it outputs, and the amount of options the user can choose
     private void optionsTop(int frameX, int frameY) {
 
+        //Creating text coordinate variables
         int textX;
         int textY;
 
         //Title
         String text = "OPTIONS";
         textX = t.findCenter(g2, rp, text);
-        textY = frameY + rp.tileSize;
+        textY = frameY + rp.TILESIZE;
         g2.drawString(text, textX, textY);
 
         //Save Game
-        textX = frameX + rp.tileSize;
-        textY += rp.tileSize * 2;
+        textX = frameX + rp.TILESIZE;
+        textY += rp.TILESIZE * 2;
         g2.drawString("SAVE GAME", textX, textY);
-        if (cmdNo == 0) {
-            g2.drawString(">", textX - 25, textY);
-        }
+        cursor(0, 3, 0, textX, textY);      //Calling the function to place the position according to the the value of commandNumber
 
         //Controls
-        textY += rp.tileSize;
+        textY += rp.TILESIZE;
         g2.drawString("CONTROLS", textX, textY);
-        if (cmdNo == 1) {
-            g2.drawString(">", textX - 25, textY);
-            if (rp.key.interactPressed == true) {
-                subState = 1;
-                cmdNo = 0;
-            }
-        }
+        cursor(1, 1, 0, textX, textY);
+
         //Exit Game
-        textY += rp.tileSize;
+        textY += rp.TILESIZE;
         g2.drawString("EXIT GAME", textX, textY);
-        if (cmdNo == 2) {
-            g2.drawString(">", textX - 25, textY);
-            if (rp.key.interactPressed == true) {
-                subState = 2;
-                cmdNo = 0;
-            }
-        }
+        cursor(2, 2, 0, textX, textY);
 
         //Back
-        textY += rp.tileSize * 4;
+        textY += rp.TILESIZE * 4;
         g2.drawString("BACK", textX, textY);
-        if (cmdNo == 3) {
+        //This is the only unique option in the option screen as it uses rp.gameState rather than subState
+        if (commandNumber == 3) {
             g2.drawString(">", textX - 25, textY);
-            if (rp.key.interactPressed == true) {
+            //
+            if (rp.keyHandlerObj.interactPressed == true) {
                 rp.gameState = States.PLAYSTATE;
-                cmdNo = 0;
+                commandNumber = 0;
             }
         }
     }
 
+    //Function for the save option in the options menu
+    private void optionSave(int frameX, int frameY) {
+        int textX;
+        int textY;
+
+        //Calling Save function
+        rp.saveLoad.save();
+
+        //Title
+        String text = "SAVE SUCCESSFUL";
+        textX = t.findCenter(g2, rp, text);
+        textY = frameY + rp.TILESIZE;
+        g2.drawString(text, textX, textY);
+
+        //Subtext
+        String line = "Save was successful!";
+        textX = frameX + rp.TILESIZE;
+        textY = frameY + rp.TILESIZE * 3;
+        g2.drawString(line, textX, textY);
+
+        //Back
+        textX = frameX + rp.TILESIZE;
+        textY = frameY + rp.TILESIZE * 9;
+        g2.drawString("BACK", textX, textY);
+        cursor(0, 0, 0, textX, textY);
+    }
+
+    //Function the controls option in the options menu
     private void optionsControl(int frameX, int frameY) {
         int textX;
         int textY;
@@ -161,83 +215,76 @@ public class UI {
         //Title
         String text = "CONTROLS";
         textX = t.findCenter(g2, rp, text);
-        textY = frameY + rp.tileSize;
+        textY = frameY + rp.TILESIZE;
         g2.drawString(text, textX, textY);
 
         //Subtext
-        textX = frameX + rp.tileSize;
-        textY += rp.tileSize;
+        textX = frameX + rp.TILESIZE;
+        textY += rp.TILESIZE;
         g2.drawString("MOVEMENT", textX, textY);
-        textY += rp.tileSize;
+        textY += rp.TILESIZE;
         g2.drawString("OPTIONS", textX, textY);
-        textY += rp.tileSize;
+        textY += rp.TILESIZE;
         g2.drawString("INTERACT", textX, textY);
 
         //Keys
-        textX = frameX + rp.tileSize * 4;
-        textY = frameY + rp.tileSize * 2;
+        textX = frameX + rp.TILESIZE * 4;
+        textY = frameY + rp.TILESIZE * 2;
         g2.drawString("ARROW KEYS", textX, textY);
-        textY += rp.tileSize;
+        textY += rp.TILESIZE;
         g2.drawString("ESC", textX, textY);
-        textY += rp.tileSize;
+        textY += rp.TILESIZE;
         g2.drawString("Z", textX, textY);
 
         //Back
-        textX = frameX + rp.tileSize;
-        textY = frameY + rp.tileSize * 9;
+        textX = frameX + rp.TILESIZE;
+        textY = frameY + rp.TILESIZE * 9;
         g2.drawString("BACK", textX, textY);
-        if (cmdNo == 0) {
-            g2.drawString(">", textX - 25, textY);
-            if (rp.key.interactPressed == true) {
-                subState = 0;
-            }
-        }
+        cursor(0, 0, 0, textX, textY);
     }
 
+    //Function for the quit option of the options screen
     private void optionsQuit(int frameX, int frameY) {
 
         //Title
         String text = "WARNING";
         int textX = t.findCenter(g2, rp, text);
-        int textY = frameY + rp.tileSize;
+        int textY = frameY + rp.TILESIZE;
         g2.drawString(text, textX, textY);
 
         //Subtext
         String dialogue = "Are you sure you want to /nquit to the title scren?";
-        textX = frameX + rp.tileSize;
-        textY = frameY + rp.tileSize * 3;
+        textX = frameX + rp.TILESIZE;
+        textY = frameY + rp.TILESIZE * 3;
         for (String line : dialogue.split("/n")) {
             g2.drawString(line, textX, textY);
             textY += 40;
         }
 
-        //Yes
+        //Yes option
         text = "YES";
         textX = t.findCenter(g2, rp, text);
-        textY += rp.tileSize * 3;
+        textY += rp.TILESIZE * 3;
         g2.drawString(text, textX, textY);
-        if (cmdNo == 0) {
+        //Another unique version of the cursor function as it deals with gameState rather than subState
+        if (commandNumber == 0) {
             g2.drawString(">", textX - 25, textY);
-            if (rp.key.interactPressed == true) {
+            if (rp.keyHandlerObj.interactPressed == true) {
                 subState = 0;
                 rp.gameState = States.TITLESTATE;
             }
         }
 
-        //No
+        //No option
         text = "NO";
         textX = t.findCenter(g2, rp, text);
-        textY += rp.tileSize;
+        textY += rp.TILESIZE;
         g2.drawString(text, textX, textY);
-        if (cmdNo == 1) {
-            g2.drawString(">", textX - 25, textY);
-            if (rp.key.interactPressed == true) {
-                subState = 0;
-                cmdNo=2;
-            }
-        }
+        cursor(1, 0, 2, textX, textY);
     }
 
+    //Function that draws the instruction screen
+    //This is the first screen that the user is met upon loading the game
     private void drawInstructionScreen() {
         //Instructions
         g2.setFont(new Font("Arial", Font.PLAIN, 70));
@@ -245,7 +292,7 @@ public class UI {
 
         String text = "INSTRUCTIONS";
         int x = t.findCenter(g2, rp, text);
-        int y = rp.tileSize * 3;
+        int y = rp.TILESIZE * 3;
         g2.drawString(text, x, y);
 
         g2.setFont(new Font("Arial", Font.PLAIN, 20));
@@ -253,55 +300,61 @@ public class UI {
 
         text = "Use Arrow Keys to move";
         x = t.findCenter(g2, rp, text);
-        y += rp.tileSize * 2;
+        y += rp.TILESIZE * 2;
         g2.drawString(text, x, y);
 
         text = "Z to interact";
         x = t.findCenter(g2, rp, text);
-        y += rp.tileSize;
+        y += rp.TILESIZE;
         g2.drawString(text, x, y);
 
         text = "ESCAPE to go to options menu";
         x = t.findCenter(g2, rp, text);
-        y += rp.tileSize;
+        y += rp.TILESIZE;
         g2.drawString(text, x, y);
 
         text = "Press Space to continue";
         x = t.findCenter(g2, rp, text);
-        y += rp.tileSize;
+        y += rp.TILESIZE;
         g2.drawString(text, x, y);
 
     }
 
+    //Function that draws the play screen of the game
+    //This function also features a check to see if the user has finished the game
     private void drawPlayScreen() {
         if (gameFinished == true) {
-            if (rp.player.hasCoffee == true) {
-                coffeeEnd(g2);
-            } else if (rp.player.hasTea == true) {
-                teaEnd(g2);
+            //An if statement that checks if the user went for the coffee or tea route
+            if (rp.playerObj.hasCoffee == true) {
+                endingScreen(States.COFFEE_ENDING, g2);
+            } else if (rp.playerObj.hasTea == true) {
+                endingScreen(States.TEA_ENDING, g2);
             }
             rp.gameThread = null;
 
         } else {
+            //Otherwise the function simply draws the UI
             drawUI(g2);
         }
     }
 
+    //Function that draws the titlescreen
     public void drawTitleScreen() {
 
-        //Title Name
+        //Font face and color
         g2.setFont(new Font("Arial", Font.PLAIN, 70));
         g2.setColor(Color.white);
 
+        //Title Name
         String text = "Coffee Adventure";
         int x = t.findCenter(g2, rp, text);
-        int y = rp.tileSize * 3;
+        int y = rp.TILESIZE * 3;
         g2.drawString(text, x, y);
 
-        //Character
-        x = rp.screenWidth / 2 - (rp.tileSize * 2) / 2;
-        y += rp.tileSize * 2;
-        g2.drawImage(rp.player.idle, x, y, rp.tileSize * 2, rp.tileSize * 2, null);
+        //Character that appears on the titlescreen
+        x = rp.SCREENWIDTH / 2 - (rp.TILESIZE * 2) / 2;
+        y += rp.TILESIZE * 2;
+        g2.drawImage(rp.playerObj.idle, x, y, rp.TILESIZE * 2, rp.TILESIZE * 2, null);
 
         //Menu
         g2.setFont(new Font("Arial", Font.PLAIN, 30));
@@ -309,42 +362,44 @@ public class UI {
 
         text = "NEW GAME";
         x = t.findCenter(g2, rp, text);
-        y += rp.tileSize * 4;
+        y += rp.TILESIZE * 4;
         g2.drawString(text, x, y);
-        if (cmdNo == 0) {
-            g2.drawString(">", x - rp.tileSize, y);
-        }
+        //Calling an alternative version of the cursor function for the option screen
+        cursor(0, x, y);
 
         text = "LOAD GAME";
         x = t.findCenter(g2, rp, text);
-        y += rp.tileSize;
+        y += rp.TILESIZE;
         g2.drawString(text, x, y);
-        if (cmdNo == 1) {
-            g2.drawString(">", x - rp.tileSize, y);
-        }
+        cursor(1, x, y);
+
         text = "QUIT";
         x = t.findCenter(g2, rp, text);
-        y += rp.tileSize;
+        y += rp.TILESIZE;
         g2.drawString(text, x, y);
-        if (cmdNo == 2) {
-            g2.drawString(">", x - rp.tileSize, y);
-        }
+        cursor(2, x, y);
     }
 
+    //Function that draws the UI of the game
     private void drawUI(Graphics2D g2) {
+
+        //Setting the Font face, color, and size
         g2.setFont(new Font("Arial", Font.PLAIN, 40));
         g2.setColor(Color.white);
-        g2.drawImage(itemImage, rp.tileSize / 2, rp.tileSize / 2, rp.tileSize, rp.tileSize, null);
-        g2.drawString("= " + rp.player.hasItems, 74, 65);
 
-        //Message
+        //Drawing the image for the counter on the top left (acts as the point system of the game)
+        g2.drawImage(itemImage, rp.TILESIZE / 2, rp.TILESIZE / 2, rp.TILESIZE, rp.TILESIZE, null);
+        g2.drawString("= " + rp.playerObj.itemCount, 74, 65);
+
+        //Message that draws for every item that the user gets
+        //This message prints below the point system on the top left corner
         if (messageOn == true) {
-
             g2.setFont(g2.getFont().deriveFont(30F));
-            g2.drawString(message, rp.tileSize / 2, rp.tileSize * 2);
+            g2.drawString(message, rp.TILESIZE / 2, rp.TILESIZE * 2);
 
             msgCounter++;
 
+            //If statement that removes the message and 90 units of time
             if (msgCounter > 90) {
                 msgCounter = 0;
                 messageOn = false;
@@ -352,54 +407,66 @@ public class UI {
         }
     }
 
-    private void teaEnd(Graphics2D g2) {
+    //Function that draws the ending screen of the game depending on which route the user took
+    private void endingScreen(int ending, Graphics2D g2) {
+        //Creating a String variable and setting it's 
+        //Font face, color, and size
         g2.setFont(new Font("Arial", Font.BOLD, 40));
         g2.setColor(Color.white);
+        String text = "";
+        
+        //Coffee Ending
+        if (ending == States.COFFEE_ENDING) {
+            g2.setFont(new Font("Arial", Font.BOLD, 40));
+            g2.setColor(Color.white);
 
-        String text = "YOU DRANK TEA!";
-        int textLength = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-        g2.drawString(text, rp.screenWidth / 2 - textLength / 2, rp.screenHeight / 2 - (rp.tileSize * 3));
+            text = "YOU DRANK COFFEE!";
+            int textLength = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+            g2.drawString(text, rp.SCREENWIDTH / 2 - textLength / 2, rp.SCREENHEIGHT / 2 - (rp.TILESIZE * 3));
 
-        g2.setFont(new Font("Arial", Font.BOLD, 50));
-        g2.setColor(Color.yellow);
+            g2.setFont(new Font("Arial", Font.BOLD, 50));
+            g2.setColor(Color.yellow);
 
-        text = "COULD BE BETTER";
-        textLength = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+            text = "CONGRATULATIONS!";
+            textLength = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
 
-        g2.drawString(text, rp.screenWidth / 2 - textLength / 2, rp.screenHeight / 2 + (rp.tileSize * 2));
+            g2.drawString(text, rp.SCREENWIDTH / 2 - textLength / 2, rp.SCREENHEIGHT / 2 + (rp.TILESIZE * 2));
 
-        g2.setFont(new Font("Arial", Font.BOLD, 30));
-        g2.setColor(Color.white);
+            g2.setFont(new Font("Arial", Font.BOLD, 30));
+            g2.setColor(Color.white);
 
-        text = "Final Score: " + rp.player.hasItems;
-        textLength = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-        g2.drawString(text, rp.screenWidth / 2 - textLength / 2, rp.screenHeight / 2 + (rp.tileSize * 4));
+            text = "Final Score: " + rp.playerObj.itemCount;
+            textLength = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+            g2.drawString(text, rp.SCREENWIDTH / 2 - textLength / 2, rp.SCREENHEIGHT / 2 + (rp.TILESIZE * 4));
+        } 
+        //Tea Ending
+        else if (ending == States.TEA_ENDING) {
+            //Printing the Header's message
+            text = "YOU DRANK TEA!";
+            int textLength = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+            g2.drawString(text, rp.SCREENWIDTH / 2 - textLength / 2, rp.SCREENHEIGHT / 2 - (rp.TILESIZE * 3));
+
+            //Sub-header font's face, color, and size
+            g2.setFont(new Font("Arial", Font.BOLD, 50));
+            g2.setColor(Color.yellow);
+
+            //Printing the sub-header's message
+            text = "COULD BE BETTER";
+            textLength = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+            g2.drawString(text, rp.SCREENWIDTH / 2 - textLength / 2, rp.SCREENHEIGHT / 2 + (rp.TILESIZE * 2));
+
+            //Setting the font face, color, and size of the total points
+            g2.setFont(new Font("Arial", Font.BOLD, 30));
+            g2.setColor(Color.white);
+
+            //Prints the user's final score
+            text = "Final Score: " + rp.playerObj.itemCount;
+            textLength = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+            g2.drawString(text, rp.SCREENWIDTH / 2 - textLength / 2, rp.SCREENHEIGHT / 2 + (rp.TILESIZE * 4));
+        }
     }
 
-    private void coffeeEnd(Graphics2D g2) {
-        g2.setFont(new Font("Arial", Font.BOLD, 40));
-        g2.setColor(Color.white);
-
-        String text = "YOU DRANK COFFEE!";
-        int textLength = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-        g2.drawString(text, rp.screenWidth / 2 - textLength / 2, rp.screenHeight / 2 - (rp.tileSize * 3));
-
-        g2.setFont(new Font("Arial", Font.BOLD, 50));
-        g2.setColor(Color.yellow);
-
-        text = "CONGRATULATIONS!";
-        textLength = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-
-        g2.drawString(text, rp.screenWidth / 2 - textLength / 2, rp.screenHeight / 2 + (rp.tileSize * 2));
-
-        g2.setFont(new Font("Arial", Font.BOLD, 30));
-        g2.setColor(Color.white);
-
-        text = "Final Score: " + rp.player.hasItems;
-        textLength = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-        g2.drawString(text, rp.screenWidth / 2 - textLength / 2, rp.screenHeight / 2 + (rp.tileSize * 4));
-    }
-
+    //Drawing the window for the options menu
     private void drawSubWindow(int x, int y, int width, int height) {
         Color c = new Color(0, 0, 0);
         g2.setColor(c);
